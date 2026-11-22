@@ -1,0 +1,42 @@
+{
+  "id": "/census/",
+  "name": "Integration census",
+  "short_name": "Census",
+  "description": "Checks which ways a web app can be opened by the operating system and by other apps, in the browser it runs in.",
+  "start_url": "/census/?via=start",
+  "scope": "/census/",
+  "display": "standalone",
+  "background_color": "#0b1330",
+  "theme_color": "#0f1c3f",
+  "icons": [
+    { "src": "/census/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/census/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/census/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "protocol_handlers": [
+    { "protocol": "web+census", "url": "/census/?via=manifest-protocol&u=%s" }
+  ],
+  "file_handlers": [
+    {
+      "action": "/census/?via=file",
+      "accept": { "text/plain": [".txt"], "application/x-census": [".census"] },
+      "launch_type": "single-client"
+    }
+  ],
+  "launch_handler": { "client_mode": ["focus-existing", "auto"] },
+  "share_target": {
+    "action": "/census/share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [{ "name": "files", "accept": ["text/plain", "image/*", "application/pdf", ".txt", ".census"] }]
+    }
+  },
+  "shortcuts": [
+    { "name": "Run the census", "url": "/census/?via=shortcut" },
+    { "name": "What is missing", "url": "/missing/?via=shortcut" }
+  ]
+}

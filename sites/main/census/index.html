@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Integration census: how a web app can be opened | Handlers</title>
+  <meta name="description" content="Checks, in your browser, each way the operating system and other apps can open a web app: link schemes, file handlers, share targets, launch handling and service worker messages. Install the page to try each route.">
+  <link rel="manifest" href="/census/manifest.json">
+  <meta name="theme-color" content="#0f1c3f">
+  <link rel="stylesheet" href="/base.css">
+    <link rel="stylesheet" href="/census/census.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-bar">
+      <a class="wordmark" href="/">Handlers</a>
+      <nav><a href="/patterns/">All patterns</a><a href="/census/" aria-current="page">Census</a><a href="/missing/">What is missing</a><a href="https://port-authority.dev">Port Authority</a></nav>
+    </header>
+    <div class="stack" style="padding-block:2.5rem 1.5rem; --gap:1.1rem">
+      <h1 style="font-size:var(--step-3)">Integration census: every way a web app can be opened</h1>
+      <p><a href="https://port-authority.dev/">Port Authority</a> is about what two pages can do once they hold a port to each other. This page is about the step before that: how a web app gets opened in the first place. A link with a scheme of its own, a file double-clicked in the operating system, a share from another app, an icon on the home screen, a message to a service worker.</p>
+      <p>Each row below is checked in the browser you are reading this with, when the page loads. A green bar means the browser has it. A red bar means it is missing or was refused. Nothing on this page asks you for anything until you press a button.</p>
+      <p id="tally" class="small" aria-live="polite">The checks are running.</p>
+      <ul class="toc">
+        <li><a href="#visit">How this page was opened</a></li>
+        <li><a href="#links">Links with a scheme of their own</a></li>
+        <li><a href="#app">The installed app</a></li>
+        <li><a href="#files">Files</a></li>
+        <li><a href="#sharing">Sharing</a></li>
+        <li><a href="#sw">Messages to a service worker</a></li>
+        <li><a href="#uses">What people could build</a></li>
+        <li><a href="#try">Try each route</a></li>
+        <li><a href="#manifest">What this page declares</a></li>
+        <li><a href="#how">How this census was made</a></li>
+      </ul>
+    </div>
+    <main>
+      <section id="visit">
+        <h2>How this page was opened</h2>
+        <p>This page is also an installable app. Its manifest declares a handler for <code>web+census:</code> links, for <code>.txt</code> and <code>.census</code> files, a share target and a launch handler. Every route ends up here, and this list records what arrived. Install the page, then open it each way from <a href="#try">Try each route</a>.</p>
+        <ol id="launches" class="launch-log"><li class="empty muted">Opened as an ordinary page, with nothing handed to it.</li></ol>
+      </section>
+
+      <section id="links">
+        <h2>Links with a scheme of their own</h2>
+        <p>A page can ask to receive every link that starts with a given scheme with <code>registerProtocolHandler</code>. An installed app can declare the same in its manifest with <code>protocol_handlers</code>. In both cases the handler is given the whole link as one string in its address. My earlier post <a href="https://paul.kinlan.me/detecting-if-a-url-scheme-can-be-handled/">Detecting if a URL scheme can be handled</a> is about what happens when nothing handles it.</p>
+        <div class="scroll"><table>
+          <thead><tr><th>Surface</th><th>Here</th><th>What happened</th></tr></thead>
+          <tbody>
+            <tr><th><code>registerProtocolHandler</code></th><td data-probe="rph" data-short></td><td data-probe="rph"></td></tr>
+            <tr><th>The rules it enforces</th><td data-probe="rph-rules" data-short></td><td data-probe="rph-rules"></td></tr>
+            <tr><th><code>unregisterProtocolHandler</code></th><td data-probe="rph-unregister" data-short></td><td data-probe="rph-unregister"></td></tr>
+            <tr><th>Asking whether a scheme has a handler</th><td data-probe="rph-query" data-short></td><td data-probe="rph-query"></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="app">
+        <h2>The installed app</h2>
+        <p>Handlers in the manifest only take effect once the page is installed. These rows check what a page can learn about that, and what an installed window adds.</p>
+        <div class="scroll"><table>
+          <thead><tr><th>Surface</th><th>Here</th><th>What happened</th></tr></thead>
+          <tbody>
+            <tr><th>A manifest</th><td data-probe="manifest" data-short></td><td data-probe="manifest"></td></tr>
+            <tr><th>Reading back what the browser accepted</th><td data-probe="manifest-read" data-short></td><td data-probe="manifest-read"></td></tr>
+            <tr><th><code>display-mode</code></th><td data-probe="display" data-short></td><td data-probe="display"></td></tr>
+            <tr><th><code>beforeinstallprompt</code></th><td data-probe="install-prompt" data-short></td><td data-probe="install-prompt"></td></tr>
+            <tr><th><code>navigator.install</code></th><td data-probe="install-api" data-short></td><td data-probe="install-api"></td></tr>
+            <tr><th><code>getInstalledRelatedApps</code></th><td data-probe="related-apps" data-short></td><td data-probe="related-apps"></td></tr>
+            <tr><th><code>setAppBadge</code></th><td data-probe="badge" data-short></td><td data-probe="badge"></td></tr>
+            <tr><th><code>windowControlsOverlay</code></th><td data-probe="wco" data-short></td><td data-probe="wco"></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="files">
+        <h2>Files</h2>
+        <p>With <code>file_handlers</code> in its manifest, an installed app appears in the operating system's Open with list for the file types it names. The files arrive on <code>launchQueue</code> as handles, which can be written back to. <code>launch_handler</code> decides whether each launch opens a new window or goes to one already open.</p>
+        <div class="scroll"><table>
+          <thead><tr><th>Surface</th><th>Here</th><th>What happened</th></tr></thead>
+          <tbody>
+            <tr><th><code>launchQueue</code></th><td data-probe="launch-queue" data-short></td><td data-probe="launch-queue"></td></tr>
+            <tr><th>A way back from a launch</th><td data-probe="launch-reply" data-short></td><td data-probe="launch-reply"></td></tr>
+            <tr><th><code>showOpenFilePicker</code></th><td data-probe="file-picker" data-short></td><td data-probe="file-picker"></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="sharing">
+        <h2>Sharing</h2>
+        <p><code>navigator.share</code> sends text, a link or files out through the system share sheet. <code>share_target</code> in a manifest puts an installed app into that sheet. On this page the share arrives at the service worker as a form, which keeps it and sends the window here. I wrote about <a href="https://paul.kinlan.me/registering-as-a-share-target-with-the-web-share-target-api/">registering as a share target</a> and <a href="https://paul.kinlan.me/file-web-share-target/">receiving files</a> when they first shipped.</p>
+        <div class="scroll"><table>
+          <thead><tr><th>Surface</th><th>Here</th><th>What happened</th></tr></thead>
+          <tbody>
+            <tr><th><code>navigator.share</code></th><td data-probe="share" data-short></td><td data-probe="share"></td></tr>
+            <tr><th>Sharing a file</th><td data-probe="share-files" data-short></td><td data-probe="share-files"></td></tr>
+            <tr><th>Knowing about a share target</th><td data-probe="share-target" data-short></td><td data-probe="share-target"></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="sw">
+        <h2>Messages to a service worker</h2>
+        <p>A service worker runs for an origin with no page open, which makes it the obvious place to receive work from outside. These rows send this page's own service worker a message and check each way it can answer. The last two rows check what it cannot do. <a href="https://port-authority.dev/patterns/swpair/">Joining two sites' service workers</a> shows the workaround for the other-origin case.</p>
+        <div class="scroll"><table>
+          <thead><tr><th>Surface</th><th>Here</th><th>What happened</th></tr></thead>
+          <tbody>
+            <tr><th>An answer on a <code>MessagePort</code></th><td data-probe="sw-port" data-short></td><td data-probe="sw-port"></td></tr>
+            <tr><th>An answer with <code>client.postMessage</code></th><td data-probe="sw-client" data-short></td><td data-probe="sw-client"></td></tr>
+            <tr><th>An answer on a <code>BroadcastChannel</code></th><td data-probe="sw-broadcast" data-short></td><td data-probe="sw-broadcast"></td></tr>
+            <tr><th>Another origin's service worker</th><td data-probe="sw-other-origin" data-short></td><td data-probe="sw-other-origin"></td></tr>
+            <tr><th>A launch event in the worker</th><td data-probe="sw-launch" data-short></td><td data-probe="sw-launch"></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="uses">
+        <h2>What people could build with these</h2>
+        <p>Each row is something I would want from a web app, the surfaces it would use, and whether it can be built today. The rows marked Blocked are the ones that need something back from the app that was opened, which none of these routes can carry. Where <a href="https://port-authority.dev/">Port Authority</a> already does the round trip a different way, the row links to it.</p>
+        <div class="scroll"><table class="uses">
+          <thead><tr><th>Use</th><th>Built from</th><th>Today</th></tr></thead>
+          <tbody>
+            <tr data-today="works"><th>Follow someone from any page, on your own Mastodon or ActivityPub server</th><td><code>registerProtocolHandler</code> for <code>web+follow:</code></td><td class="today-works"><b>Works.</b> Works in a tab. The page with the link cannot tell whether anything will open it. <a href=">More</a>./missing/#query"</td></tr>
+            <tr data-today="works"><th>Email links that open the webmail you use</th><td><code>registerProtocolHandler</code> for <code>mailto:</code></td><td class="today-works"><b>Works.</b> Works in a tab, on desktop.</td></tr>
+            <tr data-today="works"><th>Open a <code>.csv</code> from the desktop in a web spreadsheet, and save back to the same file</th><td><code>file_handlers</code>, file handles on <code>launchQueue</code></td><td class="today-works"><b>Works.</b> Works once installed, on desktop.</td></tr>
+            <tr data-today="works"><th>A music player that queues a file into the window already playing</th><td><code>file_handlers</code>, <code>launch_handler</code> focus-existing</td><td class="today-works"><b>Works.</b> Works once installed.</td></tr>
+            <tr data-today="works"><th>A chat app where every link focuses the one open window</th><td><code>protocol_handlers</code>, <code>launch_handler</code></td><td class="today-works"><b>Works.</b> Works once installed.</td></tr>
+            <tr data-today="partial"><th>Send an article to a read-later app</th><td><code>share_target</code></td><td class="today-partial"><b>Partly.</b> Works once installed, and a window opens every time, even though there is nothing to show. <a href=">More</a>./missing/#window"</td></tr>
+            <tr data-today="gap"><th>Share photos to an editor and get the edited photos back</th><td><code>navigator.share</code>, <code>share_target</code></td><td class="today-gap"><b>Blocked.</b> Cannot be built: a share has no answer. <a href=">More</a>./missing/#share"</td></tr>
+            <tr data-today="gap"><th>Pick a payment app with a link, and get a confirmation back</th><td><code>registerProtocolHandler</code> for <code>web+pay:</code></td><td class="today-gap"><b>Blocked.</b> Half of it: the payment app opens, and nothing can be sent back. Port Authority's picker does the round trip with a port. <a href=">More</a>.https://port-authority.dev/"</td></tr>
+            <tr data-today="gap"><th>An agent asks a site to do a task and gets the result</th><td>a <code>web+</code> link, or WebMCP tools</td><td class="today-gap"><b>Blocked.</b> Not through the operating system. Port Authority does it with a hub that hands the agent a port. <a href=">More</a>.https://port-authority.dev/hub/"</td></tr>
+            <tr data-today="gap"><th>Two apps on different origins that share one background worker</th><td>service worker messaging</td><td class="today-gap"><b>Blocked.</b> Only through a frame from the other origin, which Port Authority shows working. <a href=">More</a>.https://port-authority.dev/patterns/swpair/"</td></tr>
+            <tr data-today="works"><th>An unread count on the app's icon</th><td><code>setAppBadge</code></td><td class="today-works"><b>Works.</b> Works once installed, where the platform shows badges.</td></tr>
+            <tr data-today="partial"><th>A page that offers to install itself so that it can open your files</th><td><code>navigator.install</code>, <code>beforeinstallprompt</code></td><td class="today-partial"><b>Partly.</b> Depends on the browser. Every manifest handler waits on that install. <a href=">More</a>./missing/#install"</td></tr>
+            <tr data-today="gap"><th>Links on a partner's origin that open your installed app</th><td><code>scope_extensions</code></td><td class="today-gap"><b>Blocked.</b> Proposed, and not checked on this page yet. <a href=">More</a>./missing/#scope"</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="try">
+        <h2>Try each route</h2>
+        <p>These ask the browser or you for something, so they wait for a press. Each result is written under its button.</p>
+        <div class="routes">
+          <article class="route">
+            <h3>Install this page</h3>
+            <p>Uses <code>navigator.install</code> where it exists, and the held-back <code>beforeinstallprompt</code> where it does not.</p>
+            <p><button data-action="install">Install</button></p>
+            <p class="small" data-result="install"></p>
+          </article>
+          <article class="route">
+            <h3>Handle web+census links</h3>
+            <p>Registers this page with <code>registerProtocolHandler</code>. Then the link opens this page with the link in its address, and the list at the top records it.</p>
+            <p><button data-action="register">Register</button> <a class="button quiet" href="web+census:hello-from-the-census">Open web+census:hello-from-the-census</a></p>
+            <p class="small" data-result="register"></p>
+          </article>
+          <article class="route">
+            <h3>Open a file in the app</h3>
+            <p>Once installed, right-click a <code>.txt</code> file in your file manager and choose Open with, Integration census. Or download <a href="/census/sample.census" download>sample.census</a> and open that. A picker inside the page, for comparison:</p>
+            <p><button data-action="pick">Pick a file</button></p>
+            <p class="small" data-result="pick"></p>
+          </article>
+          <article class="route">
+            <h3>Share to and from the app</h3>
+            <p>Shares a small text file. Once the page is installed it appears in the share sheet itself, so you can share to it from here or from any other app.</p>
+            <p><button data-action="share">Share a file</button></p>
+            <p class="small" data-result="share"></p>
+          </article>
+        </div>
+      </section>
+
+      <section id="manifest">
+        <h2>What this page declares</h2>
+        <p>The whole of <a href="/census/manifest.json">manifest.json</a>, as the browser fetches it:</p>
+        <pre id="manifest-text" class="small">Loading.</pre>
+      </section>
+
+      <section id="how">
+        <h2>How this census was made</h2>
+        <p>Every check is in <a href="/census/probes.js">probes.js</a>, the buttons and the launch list in <a href="/census/launches.js">launches.js</a>, and the service worker in <a href="/census/sw.js">sw.js</a>. A check that finds a function only says it is there. It does not prove that the browser shows it to people, which on some platforms it does not. The routes that need an installed app are only proved by <a href="#try">trying them</a>.</p>
+        <p>I have run it in Chromium on Linux only so far, in a tab and not installed. The gaps it finds are written up, with what each would let people build, on <a href="/missing/">What is missing</a>. If a row is wrong in your browser, please <a href="https://github.com/PaulKinlan/handlers/issues">open an issue</a>.</p>
+      </section>
+    </main>
+    <footer class="small muted" style="padding-block:2rem 4rem">Handlers is a working name. By <a href="https://paul.kinlan.me">Paul Kinlan</a>.</footer>
+  </div>
+  <script type="module">
+    import { runAll, show, tally } from "/census/probes.js";
+    import { ACTIONS, readLaunch, logger } from "/census/launches.js";
+    const log = logger(document.getElementById("launches"));
+    readLaunch(log);
+    for (const button of document.querySelectorAll("[data-action]")) {
+      button.addEventListener("click", async () => {
+        const out = document.querySelector(`[data-result="${button.dataset.action}"]`);
+        out.textContent = "Waiting.";
+        const result = await ACTIONS[button.dataset.action]().catch((err) => ({ gap: null, text: err.message }));
+        show(out, result);
+      });
+    }
+    fetch("/census/manifest.json").then((r) => r.text()).then((t) => { document.getElementById("manifest-text").textContent = t; });
+    const el = document.getElementById("tally");
+    runAll().then(() => tally(el), (err) => { el.textContent = "The checks could not run: " + err.message; });
+  </script>
+  <script type="module" src="/refs.js"></script>
+</body>
+</html>
