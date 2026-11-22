@@ -1,0 +1,17 @@
+{
+  // The reader demo app (patterns/os-file-handoff): the same script and files as the hub, under its own
+  // Worker name so that it has its own origin.
+  "name": "ph-reader",
+  "main": "../src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "../sites",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    "html_handling": "none",
+    "not_found_handling": "none"
+  },
+  "vars": { "MAIN_HOST": "", "DEMO_SUFFIX": ".kinlan-test.workers.dev" }
+}

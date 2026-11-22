@@ -25,7 +25,8 @@ test("sites are chosen by the first label of the host", () => {
 });
 
 test("each site knows where the others are, locally and deployed", () => {
-  assert.deepEqual(siteOrigins(new URL("http://notes.localhost:8787/"), env), { main: "http://hub.localhost:8787", notes: "http://notes.localhost:8787", tasks: "http://tasks.localhost:8787" });
+  assert.deepEqual(siteOrigins(new URL("http://notes.localhost:8787/"), env), { main: "http://hub.localhost:8787", notes: "http://notes.localhost:8787", tasks: "http://tasks.localhost:8787", reader: "http://reader.localhost:8787", charts: "http://charts.localhost:8787" });
+  assert.equal(siteOrigins(new URL("https://ph-reader.kinlan-test.workers.dev/"), env).charts, "https://ph-charts.kinlan-test.workers.dev");
   assert.equal(siteOrigins(new URL("https://ph-notes.kinlan-test.workers.dev/"), env).tasks, "https://ph-tasks.kinlan-test.workers.dev");
   assert.equal(siteOrigins(new URL("https://ph-notes.kinlan-test.workers.dev/"), { ...env, MAIN_HOST: "handlers.example" }).main, "https://handlers.example");
 });
@@ -41,11 +42,16 @@ test("each app serves its own manifest, with the handlers it registers", async (
     assert.ok(manifest.file_handlers.length);
     assert.ok(manifest.share_target.action);
   }
+  for (const host of ["reader.localhost", "charts.localhost"]) {
+    const res = await get(`http://${host}/manifest.webmanifest`);
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get("content-type"), "application/manifest+json");
+  }
   assert.equal((await get("http://hub.localhost/manifest.webmanifest")).status, 404);
 });
 
 test("shared files are served on every origin", async () => {
-  for (const host of ["hub", "notes", "tasks"]) assert.equal((await get(`http://${host}.localhost/base.css`)).status, 200);
+  for (const host of ["hub", "notes", "tasks", "reader", "charts"]) assert.equal((await get(`http://${host}.localhost/base.css`)).status, 200);
 });
 
 test("pattern pages are all drawn by one file", async () => {

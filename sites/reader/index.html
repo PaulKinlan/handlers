@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reader | Handlers</title>
+  <meta name="description" content="An installable app that opens files from your file manager and lends them to another app on another origin over a MessagePort.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#3b6fe0">
+  <link rel="icon" href="/icon-192.png">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/app.css">
+  <style>
+    :root { --accent: #3b6fe0; --on-accent: #fff; }
+    .doc { max-height: 18rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--step--1); }
+    .drop { border: 2px dashed var(--line); border-radius: 12px; padding: 1rem; text-align: center; }
+    .drop.over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+    .facts { display: grid; grid-template-columns: auto 1fr; gap: .25rem .8rem; margin: 0; font-size: var(--step--1); }
+    .facts dt { color: var(--muted); }
+    .facts dd { margin: 0; overflow-wrap: anywhere; }
+    label.check { display: flex; gap: .5rem; align-items: center; font-weight: 400; margin: 0; }
+    .row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-bar">
+      <a class="wordmark" href="/">Reader</a>
+      <nav><a data-main href="/patterns/os-file-handoff/">How this works</a></nav>
+    </header>
+    <section class="app-head">
+      <h1>Open a file here. Lend it to another app.</h1>
+      <p class="note">A demo app on its own origin. Install it, and your file manager offers it for <code>.csv</code>, <code>.txt</code> and <code>.md</code> files. The reader keeps the file. The Charts app, on another origin, gets a port with four calls on it, and the reader decides whether Charts may save.</p>
+      <dl class="facts">
+        <dt>Running as</dt><dd id="mode">checking</dd>
+        <dt>Files from the OS</dt><dd id="launch">checking</dd>
+      </dl>
+    </section>
+    <main class="cols">
+      <section class="panel ruled stack">
+        <h2>The file</h2>
+        <div class="row">
+          <button id="choose">Choose a file</button>
+          <button id="sample">Use a sample file</button>
+          <input type="file" id="input" accept=".csv,.txt,.md,text/csv,text/plain,text/markdown" hidden>
+        </div>
+        <div class="drop" id="drop">Or drop a file here</div>
+        <dl class="facts" id="facts" hidden>
+          <dt>Name</dt><dd id="name"></dd>
+          <dt>Size</dt><dd id="size"></dd>
+          <dt>Came from</dt><dd id="via"></dd>
+          <dt>Can be written</dt><dd id="writable"></dd>
+        </dl>
+        <pre class="doc" id="text">No file open.</pre>
+      </section>
+      <section class="panel ruled stack">
+        <h2>Lend it to Charts</h2>
+        <p class="small muted">Opens Charts, on another origin, and hands it one end of a <code>MessageChannel</code>. Charts can call <code>describe()</code>, <code>text()</code>, <code>documents()</code> and <code>write()</code>. Nothing else on this page is reachable from there.</p>
+        <label class="check"><input type="checkbox" id="saving" disabled> Let the other app save to this file</label>
+        <div class="row">
+          <button id="send" class="accent" disabled>Open in Charts</button>
+          <button id="revoke" disabled>Take the port back</button>
+        </div>
+        <p class="small" id="link"><span class="jack"></span>No port lent</p>
+      </section>
+      <section class="panel ruled stack">
+        <h2>What happened</h2>
+        <ul class="log" id="log"><li class="muted">Nothing yet.</li></ul>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

@@ -11,9 +11,11 @@ const LABELS = {
   handlers: "main", hub: "main", localhost: "main",
   "ph-notes": "notes", notes: "notes",
   "ph-tasks": "tasks", tasks: "tasks",
+  "ph-reader": "reader", reader: "reader",
+  "ph-charts": "charts", charts: "charts",
 };
-const PROD = { main: "handlers", notes: "ph-notes", tasks: "ph-tasks" };
-const LOCAL = { main: "hub", notes: "notes", tasks: "tasks" };
+const PROD = { main: "handlers", notes: "ph-notes", tasks: "ph-tasks", reader: "ph-reader", charts: "ph-charts" };
+const LOCAL = { main: "hub", notes: "notes", tasks: "tasks", reader: "reader", charts: "charts" };
 
 const TYPES = {
   html: "text/html; charset=utf-8", js: "text/javascript; charset=utf-8", mjs: "text/javascript; charset=utf-8",
@@ -21,12 +23,12 @@ const TYPES = {
   png: "image/png", ico: "image/x-icon", md: "text/markdown; charset=utf-8",
   webmanifest: "application/manifest+json",
   // The demo file types. They are the types the apps list under file_handlers.
-  webnote: "application/x-webnote", webtasks: "application/x-webtasks",
+  webnote: "application/x-webnote", webtasks: "application/x-webtasks", csv: "text/csv; charset=utf-8",
 };
 
 // Files of these types are offered as downloads, so that the operating system,
 // not the browser tab, decides what opens them.
-const DOWNLOAD = new Set(["webnote", "webtasks"]);
+const DOWNLOAD = new Set(["webnote", "webtasks", "csv"]);
 
 export function label(host) { return host.split(":")[0].split(".")[0]; }
 export function siteFor(host) { return LABELS[label(host)] || "main"; }
