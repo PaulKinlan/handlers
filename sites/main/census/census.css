@@ -1,0 +1,45 @@
+/* Shared by /census/ and /missing/. Follows /missing/. */
+main { display: grid; gap: clamp(2.5rem, 6vw, 4rem); padding-block: 1rem 4rem; }
+main > section { display: grid; gap: 1rem; border-top: 2px solid var(--ink); padding-top: clamp(1.5rem, 4vw, 2.5rem); grid-template-columns: minmax(0, 1fr); }
+main h2 { font-size: var(--step-2); max-width: 26ch; }
+main p, main li { max-width: 68ch; }
+main ul { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.45rem; }
+.toc { columns: 2 18rem; padding: 0; margin: 0; list-style: none; display: block; }
+.toc li { margin-bottom: 0.4rem; break-inside: avoid; max-width: none; }
+.toc ul { list-style: none; padding-left: 1rem; margin-top: 0.3rem; display: block; font-size: var(--step--1); }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; font-size: var(--step--1); min-width: 36rem; width: 100%; }
+th, td { text-align: left; padding: 0.55rem 0.8rem 0.55rem 0; border-top: 1px solid var(--line); vertical-align: top; }
+thead th { border-top: 0; font-family: var(--display); font-size: var(--step-0); }
+tbody th { font-weight: 600; width: 13rem; }
+td[data-short] { white-space: nowrap; font-weight: 600; width: 5rem; }
+td[data-probe]:not([data-state])::before { content: "Checking"; color: var(--muted); font-weight: 400; }
+td[data-short][data-state="gap"] { color: var(--red); }
+td[data-short][data-state="works"] { color: var(--teal); }
+td[data-probe]:not([data-short])[data-state="gap"] { box-shadow: inset 4px 0 0 var(--red); padding-left: 0.8rem; }
+td[data-probe]:not([data-short])[data-state="works"] { box-shadow: inset 4px 0 0 var(--teal); padding-left: 0.8rem; }
+.item { border-top: 1px solid var(--line); padding-top: 1.3rem; margin-top: 0.6rem; display: grid; gap: 0.7rem; grid-template-columns: minmax(0, 1fr); }
+.item h3 { font-size: var(--step-1); max-width: 34ch; }
+.item h4 { font: 700 var(--step--1)/1.2 var(--body); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin: 0.5rem 0 0; }
+.item p { margin: 0; }
+.now { border-left: 5px solid var(--line); background: var(--panel); border-radius: 0 12px 12px 0; padding: 0.7rem 0.9rem; font-size: var(--step--1); max-width: 68ch; display: grid; gap: 0.35rem; }
+.now [data-probe] { display: block; }
+.now [data-probe]:not([data-state]):not([data-manual])::before { content: "Checking."; color: var(--muted); }
+[data-state="gap"]:not(td) { box-shadow: -5px 0 0 var(--red); margin-left: -0.9rem; padding-left: 0.9rem; }
+[data-state="works"]:not(td) { box-shadow: -5px 0 0 var(--teal); margin-left: -0.9rem; padding-left: 0.9rem; }
+.launch-log { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.45rem; font-size: var(--step--1); }
+.launch-log time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.launch-log li[data-state] { margin-left: 0; }
+.routes { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+.route { border: 2px solid var(--ink); border-radius: 18px; padding: clamp(.8rem, 3vw, 1.2rem); display: grid; gap: .6rem; align-content: start; background: color-mix(in srgb, var(--yellow) 10%, var(--paper)); }
+.route h3 { font: 800 var(--step-1)/1.1 var(--display); margin: 0; }
+.route p { margin: 0; }
+.route [data-result]:empty { display: none; }
+.route [data-state] { margin-left: 0; padding-left: .6rem; }
+#manifest-text { white-space: pre-wrap; overflow-wrap: anywhere; border: 2px solid var(--ink); border-radius: 10px; padding: .8rem; margin: 0; }
+#tally { font-weight: 600; }
+.uses td, .uses th { padding-right: 1rem; }
+.uses tbody th { width: 16rem; }
+.today-works b { color: var(--teal); }
+.today-partial b { color: var(--muted); }
+.today-gap b { color: var(--red); }

@@ -1,0 +1,25 @@
+{
+  // Handlers (working name). One Worker script, deployed under several names
+  // so that each demo app gets its own real origin. An app's manifest, its
+  // protocol handlers and its file handlers all belong to one origin, so the
+  // apps cannot share one.
+  //
+  // This file is the hub site and is also what `wrangler dev` runs locally,
+  // where one Worker stands in for every site (hub.localhost, notes.localhost,
+  // tasks.localhost). The demo apps have their own files in deploy/.
+  "name": "handlers",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "sites",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    "html_handling": "none",
+    "not_found_handling": "none"
+  },
+  // MAIN_HOST is empty until the hub has a domain of its own. Until then every
+  // site lives at <worker name><DEMO_SUFFIX>.
+  "vars": { "MAIN_HOST": "", "DEMO_SUFFIX": ".kinlan-test.workers.dev" }
+}

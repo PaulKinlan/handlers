@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>File handle probe</title>
+<script>
+  // Served on every origin. The /files/ page posts a FileSystemFileHandle here
+  // and this frame says what arrived: the handle, or a messageerror.
+  const report = (result) => parent.postMessage({ filesProbe: result, at: location.origin }, "*");
+  addEventListener("message", async (event) => {
+    if (!event.data?.probe) return;
+    const handle = event.data.handle;
+    let text = null;
+    try { text = await (await handle.getFile()).text(); } catch {}
+    report({ arrived: handle?.kind || typeof handle, name: handle?.name, text });
+  });
+  addEventListener("messageerror", () => report({ arrived: "messageerror" }));
+  parent.postMessage({ filesProbe: "ready", at: location.origin }, "*");
+</script>

@@ -1,0 +1,27 @@
+{
+  "name": "Handlers Tasks",
+  "short_name": "Tasks",
+  "description": "A task list that opens web+task: links and .webtasks files, receives shares with GET, and badges its icon.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#0e9f8e",
+  "background_color": "#edf0f4",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "protocol_handlers": [
+    { "protocol": "web+task", "url": "/?u=%s" }
+  ],
+  "file_handlers": [
+    { "action": "/", "accept": { "application/x-webtasks": [".webtasks"] } }
+  ],
+  "launch_handler": { "client_mode": "navigate-existing" },
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  }
+}
