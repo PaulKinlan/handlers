@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What web app integration is missing | Handlers</title>
+  <meta name="description" content="What I want browser vendors to build or fix in how web apps are opened by links, files, shares and other apps. Each gap is checked in your browser, with the evidence and what it would let people build.">
+  <link rel="manifest" href="/census/manifest.json">
+  <link rel="stylesheet" href="/base.css">
+    <link rel="stylesheet" href="/census/census.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-bar">
+      <a class="wordmark" href="/">Handlers</a>
+      <nav><a href="/patterns/">All patterns</a><a href="/census/">Census</a><a href="/missing/" aria-current="page">What is missing</a><a href="https://port-authority.dev">Port Authority</a></nav>
+    </header>
+    <div class="stack" style="padding-block:2.5rem 1.5rem; --gap:1.1rem">
+      <h1 style="font-size:var(--step-3)">What web app integration is missing</h1>
+      <p>The <a href="/census/">integration census</a> checks each way a web app can be opened. This page is the list of what I found missing or broken while building it, in the same form as <a href="https://port-authority.dev/missing/">What the web platform is missing</a> on Port Authority: what is missing, how I know, why I want it, what it would let people build, and what to do today.</p>
+      <p>Where a gap can be tested, this page tests it in your browser. A red bar means the gap is there. A green bar means your browser already does it.</p>
+      <p id="tally" class="small" aria-live="polite">The checks are running.</p>
+      <ul class="toc">
+        <li><a href="#argument">Why this matters to me</a></li>
+        <li><a href="#query">1. A page cannot ask whether a link will go anywhere</a></li>
+        <li><a href="#reply">2. A handler is given a string, not a channel</a></li>
+        <li><a href="#accepted">3. An app cannot see which of its handlers are on</a></li>
+        <li><a href="#share">4. A share has no answer</a></li>
+        <li><a href="#sw">5. Another origin's service worker is out of reach</a></li>
+        <li><a href="#window">6. Every launch opens a window</a></li>
+        <li><a href="#install">7. Handlers only exist after an install a page cannot offer</a></li>
+        <li><a href="#scope">8. Links into an app on another origin</a></li>
+        <li><a href="#not">What I am not asking for</a></li>
+        <li><a href="#how">How this list was made</a></li>
+      </ul>
+    </div>
+    <main>
+      <section id="argument">
+        <h2>Why this matters to me</h2>
+        <p>Native apps on every operating system can be opened by a link scheme, by a file type, by a share, and can hand a result back to whatever opened them. The web has gained most of the first half of that over ten years: <code>registerProtocolHandler</code>, then <code>share_target</code>, <code>file_handlers</code>, <code>protocol_handlers</code> and <code>launch_handler</code> in the manifest.</p>
+        <p>What it has not gained is the second half. In every one of these routes the app that is opened receives a string, a form or some file handles, and the app that started it receives nothing back. Web Intents, in 2011, had a reply. So does the <a href="https://port-authority.dev/">picker on Port Authority</a>, which hands each side one end of a <code>MessageChannel</code>. The routes below are the ones the operating system knows about, and none of them can carry a port.</p>
+        <p>I have written about this for a long time: <a href="https://paul.kinlan.me/what-happened-to-web-intents/">What happened to Web Intents</a>, <a href="https://paul.kinlan.me/the-web-that-never-was/">The web that never was</a> and <a href="https://paul.kinlan.me/detecting-if-a-url-scheme-can-be-handled/">Detecting if a URL scheme can be handled</a>. This page is the same argument, with checks.</p>
+      </section>
+
+      <section id="query">
+        <h2>1. A page cannot ask whether a link will go anywhere</h2>
+        <div class="item">
+          <h3>Nothing tells a page whether a scheme has a handler</h3>
+          <h4>What is missing</h4>
+          <p>A page that shows a <code>web+follow:</code> or <code>web+census:</code> link cannot find out whether pressing it will open anything. Chrome once had <code>navigator.isProtocolHandlerRegistered</code>. It was removed from the HTML Standard and then from Chrome.</p>
+          <div class="now"><b>In your browser, now</b><span data-probe="rph-query"></span><span data-probe="rph-unregister"></span></div>
+          <h4>How I know</h4>
+          <ul>
+            <li>The <a href="https://html.spec.whatwg.org/multipage/system-state.html#custom-handlers">custom scheme handlers section of the HTML Standard</a> defines <code>registerProtocolHandler</code> and <code>unregisterProtocolHandler</code> and nothing that reads the state.</li>
+            <li>The removal from Chrome was announced on <a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/ljkPttdvVuc/m/atNE2qYSCAAJ">blink-dev</a>. One reason given was that a page could test a long list of schemes to learn which sites a person uses.</li>
+          </ul>
+          <h4>Why I want it</h4>
+          <p>A link that does nothing when pressed is worse than no link. So sites do not use custom schemes, and send everyone to an <code>https:</code> address on one provider instead.</p>
+          <h4>What it would enable</h4>
+          <ul>
+            <li>A Follow link that opens the person's own Mastodon or ActivityPub server, and shows a sign-up choice when they have none.</li>
+            <li>Links for payments, calendars or maps that go to the app the person chose, with a sensible page when there is none.</li>
+          </ul>
+          <h4>What you have to do today</h4>
+          <p>Guess. Press the link and watch whether the page loses focus or navigates. My <a href="https://paul.kinlan.me/detecting-if-a-url-scheme-can-be-handled/">2022 post</a> goes through the ways to guess, and all of them are heuristics. An answer only on a user gesture, one scheme at a time, would deal with the fingerprinting concern.</p>
+        </div>
+      </section>
+
+      <section id="reply">
+        <h2>2. A handler is given a string, not a channel</h2>
+        <div class="item">
+          <h3>Nothing can be sent back to the app that opened a link, a file or a share</h3>
+          <h4>What is missing</h4>
+          <p>A protocol handler gets the link in its address. A file handler gets file handles on <code>launchQueue</code>. A share target gets a form. None of them gets a way to answer. The page that opened the link cannot be given a result, and cannot be given a <code>MessagePort</code> to keep talking.</p>
+          <div class="now"><b>In your browser, now</b><span data-probe="launch-reply"></span></div>
+          <div class="now"><b>Try it: does the handler page get a way back?</b>
+            <p>First register this site as the <code>web+census:</code> handler on <a href="/census/#try">the census page</a>. This opens a <code>web+census:</code> link in a new window, and the handler page reports whether it has a <code>window.opener</code>.</p>
+            <p><button data-action="opener">Open a web+census link</button></p>
+            <span data-result="opener" data-manual></span>
+          </div>
+          <h4>How I know</h4>
+          <ul>
+            <li><code>LaunchParams</code> in the <a href="https://wicg.github.io/web-app-launch/">Web App Launch Handler API</a> has <code>targetURL</code> and <code>files</code>. The check above lists what it has in your browser.</li>
+            <li><a href="https://wicg.github.io/web-share-target/">Web Share Target</a> delivers a share as a navigation to the target's address, with a GET or a POST.</li>
+          </ul>
+          <h4>Why I want it</h4>
+          <p>The useful integrations are round trips. Pick a photo and get it back edited. Ask for a signature and get the signed document. Choose a payment app and get a confirmation. Today each of these needs both apps to agree on a server, a redirect address or a shared storage area.</p>
+          <h4>What it would enable</h4>
+          <ul>
+            <li>An editor on one origin opened on a file by another app, which gets the edited file back when the editor is done.</li>
+            <li>The <a href="https://port-authority.dev/">picker on Port Authority</a> as part of the operating system: a link or a share that ends with a port between the two apps.</li>
+          </ul>
+          <h4>What you have to do today</h4>
+          <p>Open the other app in a window you control and pass ports by <code>window.postMessage</code>, which is what <a href="https://port-authority.dev/patterns/">the port patterns on Port Authority</a> do. That works between two pages. It does not work for anything the operating system starts.</p>
+        </div>
+      </section>
+
+      <section id="accepted">
+        <h2>3. An app cannot see which of its handlers are on</h2>
+        <div class="item">
+          <h3>The manifest declares handlers, and nothing reads them back</h3>
+          <h4>What is missing</h4>
+          <p>An installed app declares <code>protocol_handlers</code>, <code>file_handlers</code> and <code>share_target</code>. The browser may accept them, ignore some on a platform that does not support them, or let the person turn them off. The app cannot find out which.</p>
+          <div class="now"><b>In your browser, now</b><span data-probe="manifest-read"></span><span data-probe="display"></span></div>
+          <h4>Why I want it</h4>
+          <p>An app that cannot see whether it handles <code>.txt</code> files cannot tell the person how to open one with it, or offer a different way when it does not.</p>
+          <h4>What you have to do today</h4>
+          <p>Check <code>display-mode</code> to learn whether the page is installed, and assume the handlers came with it.</p>
+        </div>
+      </section>
+
+      <section id="share">
+        <h2>4. A share has no answer</h2>
+        <div class="item">
+          <h3>navigator.share resolves with nothing</h3>
+          <h4>What is missing</h4>
+          <p>The promise from <code>navigator.share</code> resolves with <code>undefined</code> when the share sheet closes. The sharing page is not told which app got the data or what it did. The receiving app cannot ask whether it is in the share sheet.</p>
+          <div class="now"><b>In your browser, now</b><span data-probe="share"></span><span data-probe="share-target"></span></div>
+          <div class="now"><b>Try it</b><p><button data-action="share">Share a file</button></p><span data-result="share" data-manual></span></div>
+          <h4>How I know</h4>
+          <ul><li>The <a href="https://w3c.github.io/web-share/">Web Share API</a> defines <code>share()</code> as returning a promise of nothing.</li></ul>
+          <h4>What it would enable</h4>
+          <p>Share as a request: share a photo to an editor and get the edited photo back. That is what Web Intents had, and what I wrote about in <a href="https://paul.kinlan.me/registering-as-a-share-target-with-the-web-share-target-api/">Registering as a Share Target</a>.</p>
+        </div>
+      </section>
+
+      <section id="sw">
+        <h2>5. Another origin's service worker is out of reach</h2>
+        <div class="item">
+          <h3>A page can only talk to its own origin's service worker</h3>
+          <h4>What is missing</h4>
+          <p>A service worker is the one part of a web app that can run with no window open. It is the natural place to receive a request from another app. But a page can only reach the service workers of its own origin.</p>
+          <div class="now"><b>In your browser, now</b><span data-probe="sw-other-origin"></span><span data-probe="sw-port"></span></div>
+          <h4>How I know</h4>
+          <ul><li><a href="https://w3c.github.io/ServiceWorker/#dom-serviceworkercontainer-getregistration">getRegistration</a> in the Service Workers specification rejects with a SecurityError for an address on another origin.</li></ul>
+          <h4>What you have to do today</h4>
+          <p>Put a frame from the other origin on the page and carry a port through it. <a href="https://port-authority.dev/patterns/swpair/">Joining two sites' service workers</a> does this, with the time limits and rejoining it needs.</p>
+        </div>
+      </section>
+
+      <section id="window">
+        <h2>6. Every launch opens a window</h2>
+        <div class="item">
+          <h3>There is no launch event in the service worker</h3>
+          <h4>What is missing</h4>
+          <p>A link, a file or a share sent to an installed app opens a window, or focuses one. <code>launch_handler</code> chooses which, and every choice involves a window. The service worker is never asked first, so an app cannot take a request and decide that nothing needs to be shown.</p>
+          <div class="now"><b>In your browser, now</b><span data-probe="sw-launch"></span><span data-probe="launch-queue"></span></div>
+          <h4>How I know</h4>
+          <ul>
+            <li>The <code>client_mode</code> values in the <a href="https://wicg.github.io/web-app-launch/">Web App Launch Handler API</a> are auto, navigate-new, navigate-existing and focus-existing.</li>
+            <li>A launch event for service workers was proposed in <a href="https://github.com/WICG/sw-launch">WICG/sw-launch</a> and has not shipped.</li>
+          </ul>
+          <h4>What it would enable</h4>
+          <p>An app that adds a shared link to a reading list, or saves a file to a sync folder, without a window flashing up.</p>
+        </div>
+      </section>
+
+      <section id="install">
+        <h2>7. Handlers only exist after an install a page cannot offer</h2>
+        <div class="item">
+          <h3>Install is the gate, and the way to open it differs by browser</h3>
+          <h4>What is missing</h4>
+          <p>Everything in the manifest only takes effect once the app is installed. A page can offer to install itself only in browsers with the non-standard <code>beforeinstallprompt</code>, or with <code>navigator.install</code> where that is being tried.</p>
+          <div class="now"><b>In your browser, now</b><span data-probe="install-prompt"></span><span data-probe="install-api"></span><span data-probe="related-apps"></span></div>
+          <h4>Why I want it</h4>
+          <p><code>registerProtocolHandler</code> works from an ordinary tab. The newer handlers do not. A site that wants to handle files has to persuade the person to install it first, through a control the site cannot point to.</p>
+        </div>
+      </section>
+
+      <section id="scope">
+        <h2>8. Links into an app on another origin</h2>
+        <div class="item">
+          <h3>An app's scope is one origin, and its links cannot be checked</h3>
+          <h4>What is missing</h4>
+          <p>An installed app covers addresses under its <code>scope</code> on one origin. <code>scope_extensions</code> would let it take in other origins that agree to it, so that ordinary <code>https:</code> links open the app. A page cannot check whether a given link will open in an app or a tab. I have not built a check for this yet: it needs a second origin that publishes the agreement file.</p>
+          <h4>How I know</h4>
+          <ul><li>The <a href="https://github.com/WICG/manifest-incubations/blob/gh-pages/scope_extensions-explainer.md">scope_extensions explainer</a>, and my older post on <a href="https://paul.kinlan.me/deep-web-app-linking/">deep web app linking</a>.</li></ul>
+        </div>
+      </section>
+
+      <section id="not">
+        <h2>What I am not asking for</h2>
+        <ul>
+          <li>A way for any page to list the schemes, files or shares a person's apps handle. One question at a time, on a user gesture, is enough.</li>
+          <li>Handlers that take effect without the person agreeing. Registering and installing should both stay something the person says yes to.</li>
+          <li>A reply channel that the receiving app has to accept. If it never answers, the sender should be told the other end is gone, which is <a href="https://port-authority.dev/missing/#gone">a gap of its own on Port Authority</a>.</li>
+        </ul>
+      </section>
+
+      <section id="how">
+        <h2>How this list was made</h2>
+        <p>Each item comes from building the <a href="/census/">integration census</a>. The checks are in <a href="/census/probes.js">probes.js</a>. I have run them in Chromium on Linux only, in a tab and not installed. Routes that need an installed app, such as a file opened from the operating system, I have not yet tested on each platform.</p>
+        <p>If something here is wrong, already fixed, or already proposed somewhere I did not find, please <a href="https://github.com/PaulKinlan/handlers/issues">open an issue</a>.</p>
+      </section>
+    </main>
+    <footer class="small muted" style="padding-block:2rem 4rem">Handlers is a working name. By <a href="https://paul.kinlan.me">Paul Kinlan</a>.</footer>
+  </div>
+  <script type="module">
+    import { runAll, show, tally } from "/census/probes.js";
+    import { ACTIONS } from "/census/launches.js";
+    for (const button of document.querySelectorAll("[data-action]")) {
+      button.addEventListener("click", async () => {
+        const out = document.querySelector(`[data-result="${button.dataset.action}"]`);
+        out.textContent = "Waiting.";
+        show(out, await ACTIONS[button.dataset.action]().catch((err) => ({ gap: null, text: err.message })));
+      });
+    }
+    const el = document.getElementById("tally");
+    runAll().then(() => tally(el), (err) => { el.textContent = "The checks could not run: " + err.message; });
+  </script>
+  <script type="module" src="/refs.js"></script>
+</body>
+</html>
