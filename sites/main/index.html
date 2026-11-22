@@ -28,6 +28,7 @@
     <section class="apps">
       <div class="panel ruled"><h2 style="font-size:var(--step-1)">Notes</h2><p class="small">Handles <code>web+note:</code> and <code>.webnote</code>, takes shares with files, reuses one window.</p><a class="button" id="notes" href="#">Open Notes</a></div>
       <div class="panel ruled"><h2 style="font-size:var(--step-1)">Tasks</h2><p class="small">Handles <code>web+task:</code> and <code>.webtasks</code>, takes shares with GET, badges its icon, shares out.</p><a class="button" id="tasks" href="#">Open Tasks</a></div>
+      <div class="panel ruled"><h2 style="font-size:var(--step-1)">Reader and Charts</h2><p class="small">Reader opens <code>.csv</code>, <code>.txt</code> and <code>.md</code> files from the desktop and lends Charts, on another origin, a port to the file. <a href="/patterns/os-file-handoff/">How it works</a>.</p><p class="row"><a class="button" id="reader" href="#">Open Reader</a> <a class="button quiet" id="charts" href="#">Open Charts</a></p></div>
       <div class="panel ruled"><h2 style="font-size:var(--step-1)">Try a link</h2><p class="small">These work once an app has registered the scheme.</p><p><a href="web+note:A%20note%20from%20the%20hub">web+note:A note from the hub</a><br><a href="web+task:A%20task%20from%20the%20hub">web+task:A task from the hub</a></p><p class="small"><a href="/samples/hello.webnote">hello.webnote</a> · <a href="/samples/list.webtasks">list.webtasks</a></p></div>
     </section>
     <div id="groups"></div>
@@ -38,6 +39,8 @@
     import { groups, byGroup, plain } from "/patterns/all.js";
     document.getElementById("notes").href = sites.notes;
     document.getElementById("tasks").href = sites.tasks;
+    document.getElementById("reader").href = sites.reader;
+    document.getElementById("charts").href = sites.charts;
     document.getElementById("groups").innerHTML = groups.map((g) => `<section class="group" id="${g.id}"><h2>${g.title}</h2><p>${g.blurb}</p><ul class="cards">${byGroup(g.id).map((p) => `<li><a href="/patterns/${p.id}/"><strong>${p.title}</strong><span>${plain(p.blurb).split(". ")[0]}.</span><br><span class="${p.state}">${p.state === "live" ? "Live demo" : "Planned"}</span></a></li>`).join("")}</ul></section>`).join("");
   </script>
 </body>

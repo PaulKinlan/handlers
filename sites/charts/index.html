@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Charts | Handlers</title>
+  <meta name="description" content="An installable app that draws and edits a file another app lends it over a MessagePort. It never holds the file.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#e0364c">
+  <link rel="icon" href="/icon-192.png">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/app.css">
+  <style>
+    :root { --accent: #e0364c; --on-accent: #fff; }
+    .table-wrap { overflow-x: auto; }
+    table.grid { border-collapse: collapse; width: 100%; font-size: var(--step--1); }
+    table.grid th, table.grid td { border: 1px solid var(--line); padding: 0; }
+    table.grid input { width: 100%; min-width: 5rem; border: 0; border-radius: 0; padding: .4rem .5rem; background: transparent; font: inherit; }
+    table.grid thead input { font-weight: 700; }
+    .bars { display: grid; gap: .35rem; margin: 0; padding: 0; list-style: none; }
+    .bars li { display: grid; grid-template-columns: minmax(5rem, 8rem) 1fr 3rem; gap: .5rem; align-items: center; font-size: var(--step--1); }
+    .bars .bar { height: 1rem; background: var(--accent); border: 2px solid var(--ink); border-radius: 3px; min-width: 2px; }
+    .bars span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bars span:last-child { text-align: right; font-family: var(--mono); }
+    #textarea { width: 100%; min-height: 12rem; font: var(--step--1)/1.5 var(--mono); }
+    .row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+    .bad { color: var(--red); font-weight: 600; }
+    .status { display: flex; gap: .6rem; align-items: baseline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-bar">
+      <a class="wordmark" href="/">Charts</a>
+      <nav><a data-main href="/patterns/os-file-handoff/">How this works</a></nav>
+    </header>
+    <section class="app-head">
+      <h1>A chart of a file this app never holds.</h1>
+      <p class="note">A demo app on its own origin. The Reader app, on another origin, holds the file and lends this window a port. Every read and every save goes through that port, and the reader can refuse or take it back.</p>
+      <p class="status" id="state"><span class="jack"></span>Not connected</p>
+    </section>
+    <main class="cols">
+      <section class="panel ruled stack" id="doc" hidden>
+        <h2 id="name"></h2>
+        <p class="small muted" id="meta"></p>
+        <div class="table-wrap" id="table-wrap"><table class="grid" id="table"></table></div>
+        <textarea id="textarea" hidden aria-label="File text"></textarea>
+        <div class="row">
+          <button id="add-row" hidden>Add a row</button>
+          <button id="save" class="accent">Save to the file</button>
+        </div>
+        <p class="small" id="result" role="status"></p>
+      </section>
+      <section class="panel ruled stack" id="chart-panel" hidden>
+        <h2 id="chart-title">Chart</h2>
+        <ul class="bars" id="bars"></ul>
+      </section>
+      <section class="panel ruled stack" id="alone" hidden>
+        <h2>Open this from the reader</h2>
+        <p>This window was not opened by the Reader app, so nobody has lent it a file. Open a file in the <a data-reader href="/">reader</a> and press "Open in Charts".</p>
+        <p class="small muted">If both apps are installed and this opened in its own app window with no opener, the browser cut the link between the two windows. The page on how this works lists when that happens.</p>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

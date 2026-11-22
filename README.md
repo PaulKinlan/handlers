@@ -18,6 +18,8 @@ operating system make on an app's behalf.
 | `sites/main/samples/` | `.webnote` and `.webtasks` files to open with the installed apps |
 | `sites/notes/` | Notes app: `web+note:` protocol handler, `.webnote` file handler with save back, `launch_handler: focus-existing`, POST `share_target` with files (answered by `sw.js`), a shortcut, `note_taking` |
 | `sites/tasks/` | Tasks app: `web+task:` protocol handler, `.webtasks` file handler, `launch_handler: navigate-existing`, GET `share_target`, app badge, `navigator.share()` out |
+| `sites/reader/`, `sites/charts/` | Reader and Charts, for the `os-file-handoff` pattern. Reader declares `file_handlers` for `.csv`, `.txt` and `.md` with `launch_handler: focus-existing`, takes files from `launchQueue`, the picker, a drop or a sample, and lends the open file to Charts on another origin over a Hawser port (`reader.js` holds the logic and decides each save). Charts draws and edits the table through that port and never holds the file |
+| `sites/shared/hawser.js` | Hawser, copied from Port Authority: remote objects over a `MessagePort`, with an allow list, revocation and errors that keep their class. `test/hawser.unit.mjs` comes with it |
 | `sites/shared/` | Served on every origin: `base.css`, `app.css`, `detect.js` (feature checks), `refs.js` (MDN and spec links, carried over from Port Authority) |
 | `src/worker.js` | Cloudflare Worker: picks a site folder by hostname, serves `/_sites.js` (where every site lives), and catches a POST share that arrives before the service worker is running |
 | `scripts/icons.mjs` | Writes each app's PNG icons |
@@ -32,6 +34,8 @@ demo app needs its own. One Worker script is deployed under several names:
 | Hub | `sites/main` | `http://hub.localhost:8787` | `handlers` (`wrangler.jsonc`) |
 | Notes | `sites/notes` | `http://notes.localhost:8787` | `ph-notes` (`deploy/notes.jsonc`) |
 | Tasks | `sites/tasks` | `http://tasks.localhost:8787` | `ph-tasks` (`deploy/tasks.jsonc`) |
+| Reader | `sites/reader` | `http://reader.localhost:8787` | `ph-reader` (`deploy/reader.jsonc`) |
+| Charts | `sites/charts` | `http://charts.localhost:8787` | `ph-charts` (`deploy/charts.jsonc`) |
 
 Pages find each other with `import { sites } from "/_sites.js"`.
 
@@ -46,7 +50,11 @@ Node 22 and Wrangler 4.
 npm install
 npm run dev        # wrangler dev --port 8787
 npm test           # node --test test/*.unit.mjs
+NODE_PATH=$(npm root -g) node test/files.mjs <screenshot-dir>   # Reader -> Charts in Chromium at 390px, with dev running
 ```
+
+`test/files.mjs` covers everything up to the operating system's part. Opening
+a file from the file manager into the installed Reader is tested by hand.
 
 Then open `http://hub.localhost:8787`. Chromium resolves `*.localhost` to
 your machine. Installing, protocol handlers and file handlers all work on

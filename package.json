@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "wrangler dev --port 8787",
     "icons": "node scripts/icons.mjs",
-    "test": "node --test test/*.unit.mjs"
+    "test": "NODE_OPTIONS=--expose-gc node --test test/*.unit.mjs"
   },
   "engines": { "node": ">=22" },
   "devDependencies": {
