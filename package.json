@@ -1,0 +1,16 @@
+{
+  "name": "handlers",
+  "version": "0.1.0",
+  "description": "Experiments in how installed web apps hook into the operating system and each other: protocol handlers, file handlers, launch handling and share targets.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --port 8787",
+    "icons": "node scripts/icons.mjs",
+    "test": "node --test test/*.unit.mjs"
+  },
+  "engines": { "node": ">=22" },
+  "devDependencies": {
+    "wrangler": "^4.165.0"
+  }
+}

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tasks | Handlers</title>
+  <meta name="description" content="A demo task list that handles web+task: links, opens .webtasks files, receives shares and badges its icon.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#0e9f8e">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/app.css">
+  <style>:root { --accent: var(--teal); --on-accent: #fff; }</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-bar">
+      <a class="wordmark" href="/">Tasks</a>
+      <nav><a id="hub-link" href="#">Back to the hub</a></nav>
+    </header>
+    <section class="app-head">
+      <h1>Tasks</h1>
+      <p class="note">A second demo app on another origin. It takes tasks from <code>web+task:</code> links, <code>.webtasks</code> files and the share sheet, shows the count on its icon when installed, and shares tasks out.</p>
+    </section>
+    <div class="cols">
+      <section class="panel ruled">
+        <h2>To do</h2>
+        <form id="add" class="row" style="margin-bottom:.8rem"><input type="text" id="new" aria-label="New task" placeholder="A new task" style="flex:1"><button>Add</button></form>
+        <ul id="items" class="items"></ul>
+        <div class="row" style="margin-top:.8rem">
+          <button id="share" class="quiet">Share the list</button>
+          <button id="to-note" class="quiet">Send to Notes</button>
+          <button id="download" class="quiet">Download as .webtasks</button>
+        </div>
+        <p id="state" class="small muted" style="margin-top:.6rem" aria-live="polite"></p>
+      </section>
+      <section class="panel">
+        <h2>What arrived</h2>
+        <ul id="arrivals" class="log" aria-live="polite"><li class="muted">Nothing yet.</li></ul>
+        <h2 style="margin-top:1.4rem">This browser</h2>
+        <ul id="checks" class="checks"></ul>
+        <div class="row" style="margin-top:.8rem"><button id="register" class="accent">Handle web+task: links here</button></div>
+      </section>
+    </div>
+  </div>
+  <script type="module" src="/tasks.js"></script>
+</body>
+</html>

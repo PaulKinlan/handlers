@@ -1,0 +1,14 @@
+/* Shared by the demo apps. Each sets its own --accent. */
+.app-head { padding: 2rem 0 1.2rem; display: grid; gap: 0.8rem; }
+.app-head h1 { font-size: var(--step-3); font-stretch: 100%; letter-spacing: -0.03em; line-height: 1; }
+.note { border-left: 6px solid var(--accent); padding: 0.2rem 0 0.2rem 1rem; }
+.cols { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); align-items: start; padding-bottom: 4rem; }
+.cols h2 { font-size: var(--step-1); letter-spacing: -0.01em; margin-bottom: 0.7rem; }
+.row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
+.checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; font-size: var(--step--1); }
+.arrived { background: color-mix(in srgb, var(--accent) 16%, var(--panel)); border-radius: 10px; padding: 0.8rem 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font: var(--step--1)/1.5 var(--mono); }
+textarea.editor { min-height: 14rem; font: var(--step-0)/1.5 var(--mono); resize: vertical; }
+.items { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.4rem; }
+.items li { display: flex; gap: 0.6rem; align-items: center; padding: 0.45rem 0; border-top: 1px solid var(--line); }
+.items li:first-child { border-top: 0; }
+.items li.done span { text-decoration: line-through; color: var(--muted); }

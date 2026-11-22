@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>An integration pattern | Handlers</title>
+  <meta name="description" content="One way a web app hooks into the operating system or another app: a live demo, how it works, what to build with it and what goes wrong.">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="/patterns/patterns.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-bar">
+      <a class="wordmark" href="/">Handlers</a>
+      <nav><a href="/patterns/" aria-current="true">All patterns</a><a id="notes-link" href="#">Notes app</a><a id="tasks-link" href="#">Tasks app</a></nav>
+    </header>
+    <main id="main">
+      <div class="stack" style="padding-block:2rem 1rem; --gap:.6rem">
+        <p class="crumb small"><a href="/patterns/">Patterns</a> / <span id="group"></span> <span id="state" class="badge"></span></p>
+        <h1 style="font-size:var(--step-2)" id="title">Loading</h1>
+        <p id="blurb"></p>
+      </div>
+      <section id="demo"></section>
+      <div class="deep" id="deep"></div>
+      <nav class="pager" id="pager" aria-label="More patterns"></nav>
+    </main>
+  </div>
+  <script type="module">
+    import { all, groups, plain } from "/patterns/all.js";
+    import { mount } from "/patterns/demos.js";
+    import { sites } from "/_sites.js";
+
+    const $ = (id) => document.getElementById(id);
+    $("notes-link").href = sites.notes;
+    $("tasks-link").href = sites.tasks;
+    const id = location.pathname.split("/").filter(Boolean)[1];
+    const index = all.findIndex((p) => p.id === id);
+    const list = (items) => `<ul>${items.map((i) => `<li>${i}</li>`).join("")}</ul>`;
+    const links = (items) => list(items.map(([text, href]) => `<a href="${href}">${text}</a>`));
+
+    if (index < 0) {
+      $("title").textContent = "There is no pattern here";
+      $("blurb").innerHTML = `<a href="/patterns/">See all the patterns.</a>`;
+    } else {
+      const p = all[index];
+      document.title = `${plain(p.title)} | Handlers`;
+      document.querySelector('meta[name="description"]').content = plain(p.blurb).slice(0, 180);
+      $("group").innerHTML = `<a href="/patterns/#${p.group}">${groups.find((g) => g.id === p.group).title}</a>`;
+      $("state").textContent = p.state === "live" ? "Live demo" : "Planned";
+      $("title").innerHTML = p.title;
+      $("blurb").innerHTML = p.blurb;
+
+      // The four parts: the thing running, how it works, what to build, what goes wrong.
+      mount($("demo"), p, sites);
+      const parts = [];
+      parts.push(`<section id="how"><h2>How it works</h2><div class="stack" style="--gap:.9rem">${p.how.map((t) => `<p>${t}</p>`).join("")}</div></section>`);
+      parts.push(`<section id="build"><h2>What you could build with it</h2>${list(p.build)}</section>`);
+      parts.push(`<section id="traps"><h2>What goes wrong</h2>${list(p.traps)}</section>`);
+      const more = [...(p.links || []), ...(p.blog || []).map(([t, h]) => [`${t} (Paul's blog)`, h]), ...(p.pa || [])];
+      if (more.length) parts.push(`<section id="sources"><h2>Sources and further reading</h2>${links(more)}</section>`);
+      const related = (p.related || []).map((r) => all.find((q) => q.id === r)).filter(Boolean);
+      if (related.length) parts.push(`<section id="related"><h2>Read next</h2><ul class="cards">${related.map((r) => `<li><a href="/patterns/${r.id}/"><strong>${r.title}</strong><span>${plain(r.blurb).split(". ")[0]}.</span></a></li>`).join("")}</ul></section>`);
+      $("deep").innerHTML = parts.join("");
+
+      const prev = all[index - 1], next = all[index + 1];
+      $("pager").innerHTML = `${prev ? `<a href="/patterns/${prev.id}/"><small>‹ Before this</small>${prev.title}</a>` : "<span></span>"}${next ? `<a href="/patterns/${next.id}/" style="text-align:right"><small>After this ›</small>${next.title}</a>` : ""}`;
+    }
+  </script>
+</body>
+</html>

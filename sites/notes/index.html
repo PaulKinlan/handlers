@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notes | Handlers</title>
+  <meta name="description" content="A demo notes app that handles web+note: links, opens .webnote files and receives shares.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#f5b700">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/app.css">
+  <style>:root { --accent: var(--yellow); }</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-bar">
+      <a class="wordmark" href="/">Notes</a>
+      <nav><a id="hub-link" href="#">Back to the hub</a></nav>
+    </header>
+    <section class="app-head">
+      <h1>Notes</h1>
+      <p class="note">A demo app on its own origin. Install it, then open <code>web+note:</code> links, <code>.webnote</code> files and shares with it. What arrived, and how, is listed on the right.</p>
+    </section>
+    <div class="cols">
+      <section class="panel ruled">
+        <h2 id="file-name">Untitled note</h2>
+        <label for="editor" class="small muted">Text</label>
+        <textarea id="editor" class="editor" spellcheck="true"></textarea>
+        <div class="row" style="margin-top:.8rem">
+          <button id="save">Save</button>
+          <button id="open" class="quiet">Open a file</button>
+          <button id="download" class="quiet">Download as .webnote</button>
+          <button id="make-task" class="quiet">Send to Tasks</button>
+        </div>
+        <p id="save-state" class="small muted" style="margin-top:.6rem" aria-live="polite"></p>
+      </section>
+      <section class="panel">
+        <h2>What arrived</h2>
+        <ul id="arrivals" class="log" aria-live="polite"><li class="muted">Nothing yet.</li></ul>
+        <h2 style="margin-top:1.4rem">This browser</h2>
+        <ul id="checks" class="checks"></ul>
+        <h2 style="margin-top:1.4rem">Register without installing</h2>
+        <p class="small">Works in a normal tab in Chromium and Firefox. The browser asks you to confirm.</p>
+        <div class="row" style="margin-top:.6rem"><button id="register" class="accent">Handle web+note: links here</button></div>
+        <p id="register-state" class="small muted" style="margin-top:.6rem"></p>
+      </section>
+    </div>
+  </div>
+  <script type="module" src="/notes.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+.crumb { margin: 0; }
+.badge { display: inline-block; margin-left: .4rem; padding: .1rem .5rem; border-radius: 999px; border: 1.5px solid var(--ink); font-size: var(--step--1); font-weight: 600; }
+.badge:empty { display: none; }
+.demo-box { display: grid; gap: .8rem; }
+.demo-box h2 { font-size: var(--step-1); }
+.demo-box h3 { font-size: var(--step-0); margin-top: .4rem; }
+.steps { padding-left: 1.2rem; display: grid; gap: .7rem; margin: 0; }
+.steps .button { font-size: var(--step--1); padding: .45em .8em; margin: .2rem .2rem 0 0; border-width: 1.5px; }
+.deep { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(2rem, 5vw, 3rem); padding-block: 2rem 3rem; }
+.deep section > h2 { font-size: var(--step-1); margin-bottom: .7rem; }
+.deep p, .deep li { max-width: 68ch; }
+.deep ul { padding-left: 1.2rem; display: grid; gap: .5rem; margin: 0; }
+.cards { list-style: none; padding: 0 !important; display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: .8rem; }
+.cards a { display: block; height: 100%; border: 2px solid var(--ink); border-radius: 14px; padding: .8rem .9rem; text-decoration: none; background: var(--panel); }
+.cards a:hover { background: color-mix(in srgb, var(--accent) 22%, var(--panel)); }
+.cards strong { display: block; font: 800 1rem/1.15 var(--display); margin-bottom: .3rem; }
+.cards span { font-size: var(--step--1); color: var(--muted); }
+.cards .live { color: var(--ink); font-weight: 600; }
+.pager { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-top: 2px solid var(--ink); padding-block: 1.2rem 3rem; }
+.pager a { max-width: 22rem; }
+.pager small { display: block; color: var(--muted); }
+.group { padding-block: 1.6rem; border-top: 2px solid var(--ink); display: grid; gap: .9rem; }
+.group h2 { font-size: var(--step-2); }
