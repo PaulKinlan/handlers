@@ -66,4 +66,19 @@ localhost without HTTPS.
 
 Cloudflare Workers Builds runs `npx wrangler deploy` (and
 `npx wrangler deploy -c deploy/<app>.jsonc` for each app) on every push to
-main. Each Worker needs a build set up once in the Cloudflare dashboard.
+main. The builds use the Cloudflare GitHub app, so the repository holds no
+Cloudflare token. Each Worker has one build trigger, "Deploy on push to main":
+
+| Worker | Deploy command | Address |
+| --- | --- | --- |
+| `handlers` | `npx wrangler deploy` | https://handlers.kinlan-test.workers.dev |
+| `ph-notes` | `npx wrangler deploy -c deploy/notes.jsonc` | https://ph-notes.kinlan-test.workers.dev |
+| `ph-tasks` | `npx wrangler deploy -c deploy/tasks.jsonc` | https://ph-tasks.kinlan-test.workers.dev |
+| `ph-reader` | `npx wrangler deploy -c deploy/reader.jsonc` | https://ph-reader.kinlan-test.workers.dev |
+| `ph-charts` | `npx wrangler deploy -c deploy/charts.jsonc` | https://ph-charts.kinlan-test.workers.dev |
+
+A new app's Worker needs its own trigger: in the Cloudflare dashboard open the
+Worker, then Settings, Build, connect `PaulKinlan/handlers`, branch `main`, and
+set the deploy command to `npx wrangler deploy -c deploy/<app>.jsonc`. The
+Worker must exist first, so either deploy it once by hand or create it in the
+dashboard.
