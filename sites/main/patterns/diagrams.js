@@ -289,10 +289,10 @@ export const diagrams = {
       { label: "Old origin", sub: "Installed app", tone: "a" },
     ],
     steps: [
-      { from: 0, to: 1, label: "New manifest: migrate_from: [old id]" },
+      { from: 0, to: 1, label: "New manifest: migrate_from: [old id]", sub: "both origins must be on the same site" },
       { from: 1, to: 2, label: "GET /.well-known/web-app-origin-association" },
-      { from: 2, to: 1, label: "The old origin names the new manifest id" },
-      { from: 1, to: 0, label: "The person accepts → icon and handlers move, storage does not", kind: "dashed" },
+      { from: 2, to: 1, label: '{ "<new id>": { "allow_migration": true } }', sub: "the old origin agrees" },
+      { from: 1, to: 0, label: "The person accepts → the install moves", sub: "storage and permissions do not", kind: "dashed" },
     ],
   },
   "run-on-os-login": {

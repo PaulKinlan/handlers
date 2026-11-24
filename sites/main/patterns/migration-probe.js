@@ -1,14 +1,19 @@
-// For the app-migration page: interactive manifest + well-known generator
-// showing the exact two-way handshake needed to move an installed app off its
-// current origin onto a custom domain.
+// For the app-migration page: writes out what each side publishes to move an
+// installed app to another origin on the same site. The shapes follow the PWA
+// Origin Migration explainer:
+// https://github.com/WICG/manifest-incubations/blob/gh-pages/pwa-migration-explainer.md
 
 export async function run(el, sites) {
   const current = sites.notes;
+  // A sibling of the Notes origin, so the example is same-site.
+  const sibling = new URL(current);
+  sibling.hostname = ["notebook", ...sibling.hostname.split(".").slice(1)].join(".");
+
   el.insertAdjacentHTML("beforeend", `<h3>What each side would publish</h3>
-    <p class="small muted">Type the origin Notes would move to. It is on <code>${current}</code> now.</p>
+    <p class="small muted">Type the origin Notes would move to. It is on <code>${current}</code> now, and the new origin has to be on the same site.</p>
     <div class="row" style="margin-top:.5rem">
       <label for="mig-host" style="margin:0">New origin</label>
-      <input type="text" id="mig-host" value="https://notes.beyondthetab.dev" style="max-width:18rem">
+      <input type="text" id="mig-host" value="${sibling.origin}" style="max-width:20rem">
     </div>
     <div style="display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));margin-top:.6rem">
       <div>
@@ -29,7 +34,7 @@ export async function run(el, sites) {
     let target = input.value.trim().replace(/\/+$/, "");
     if (!/^https?:\/\//.test(target)) target = "https://" + target;
     mOut.textContent = JSON.stringify({
-      id: target + "/",
+      id: "/",
       start_url: "/",
       migrate_from: [{ id: current + "/", behavior: "suggest" }],
     }, null, 2);
