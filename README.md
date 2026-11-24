@@ -11,19 +11,20 @@ operating system make on an app's behalf.
 
 | Path | What it is |
 | --- | --- |
-| `sites/main/` | The hub: home page, `/patterns/` index, and one page per pattern |
-| `sites/main/patterns/all.js` | Every pattern as data: group, state (`live` or `planned`), how it works, what to build, what goes wrong, sources, Paul's related posts, related Port Authority pages |
-| `sites/main/patterns/_page.html` | Draws `/patterns/<id>/` for every pattern: the live demo, then how it works, what you could build, what goes wrong |
-| `sites/main/patterns/demos.js` | The live part of each pattern page: steps that use the demo apps, and the feature checks for this browser |
-| `sites/main/census/` | The integration census: 23 checks of how a web app can be opened (link schemes, manifest handlers, launch handling, sharing, install, badging, service worker messages), run in the reader's browser by `probes.js`, and a table of use cases marked works, partly or blocked. The page is itself installable: `manifest.json` declares `protocol_handlers` (`web+census:`), `file_handlers` (`.txt`, `.census`), POST `share_target` (answered by `sw.js`) and `launch_handler`, and `launches.js` lists what each route delivered. `test/census.mjs` is a Playwright check of both pages |
-| `sites/main/missing/` | What web app integration is missing: eight gaps, each with the evidence, what it would enable, what to do today, and a check from `census/probes.js` where one can run |
-| `sites/main/samples/` | `.webnote` and `.webtasks` files to open with the installed apps |
-| `sites/notes/` | Notes app: `web+note:` protocol handler, `.webnote` file handler with save back, `launch_handler: focus-existing`, POST `share_target` with files (answered by `sw.js`), a shortcut, `note_taking` |
-| `sites/tasks/` | Tasks app: `web+task:` protocol handler, `.webtasks` file handler, `launch_handler: navigate-existing`, GET `share_target`, app badge, `navigator.share()` out |
+| `sites/main/` | The hub: split hero + multi-origin demo launcher, interactive pattern explorer (`explorer.js`), and one page per pattern |
+| `sites/main/patterns/all.js` | Every pattern as data (27 total across 5 groups): state (`live` or `planned`), how it works, what to build, what goes wrong, sources, Paul's related posts, related Port Authority pages |
+| `sites/main/patterns/diagrams.js` | Inline, theme-aware SVG sequence diagrams for every pattern, showing actors, origin boundaries, handoffs, and platform gaps |
+| `sites/main/patterns/_page.html` | Draws `/patterns/<id>/` for every pattern: the workflow diagram, the live demo & browser checks, then how it works, what you could build, and what goes wrong |
+| `sites/main/patterns/demos.js` | The live part of each pattern page: multi-origin walkthroughs, browser feature checks, and interactive probes (`handoff-probe.js`, `scheme-probe.js`, `scope-probe.js`, `install-probe.js`, `screens-probe.js`, `contact-probe.js`, `intents-probe.js`, `related-apps-probe.js`, `credentials-probe.js`, `migration-probe.js`) |
+| `sites/main/census/` | The integration census: 24 checks of how a web app can be opened (link schemes, manifest handlers, launch handling, sharing, install, badging, service worker messages, origin association), run in the reader's browser by `probes.js`, and a table of use cases marked works, partly or blocked. The page is itself installable: `manifest.json` declares `protocol_handlers` (`web+census:`), `file_handlers` (`.txt`, `.census`), POST `share_target` (answered by `sw.js`) and `launch_handler`, and `launches.js` lists what each route delivered. `test/census.mjs` is a Playwright check of both pages |
+| `sites/main/missing/` | What web app integration is missing: eight gaps, each with the evidence, what it would enable, what to do today, and a live check from `census/probes.js` |
+| `sites/main/samples/` | `.webnote`, `.webtasks`, and `.csv` files to open with the installed apps |
+| `sites/notes/` | Notes app: `web+note:` protocol handler, `.webnote` file handler with save back, drag-and-drop file handles (`getAsFileSystemHandle`), structured clipboard paste (`web application/x-webtasks+json`), `launch_handler: focus-existing`, `handle_links: preferred`, `display_override: tabbed` + `tab_strip`, dynamic `scope_extensions` & `related_applications`, POST `share_target` with files, shortcut, `note_taking` |
+| `sites/tasks/` | Tasks app: `web+task:` protocol handler, `.webtasks` file handler, `launch_handler: navigate-existing`, `handle_links: preferred`, GET `share_target`, app badge, `navigator.share()` out, structured clipboard copy, Window Controls Overlay (`display_override: window-controls-overlay`), and Document Picture-in-Picture pop-out |
 | `sites/reader/`, `sites/charts/` | Reader and Charts, for the `os-file-handoff` pattern. Reader declares `file_handlers` for `.csv`, `.txt` and `.md` with `launch_handler: focus-existing`, takes files from `launchQueue`, the picker, a drop or a sample, and lends the open file to Charts on another origin over a Hawser port (`reader.js` holds the logic and decides each save). Charts draws and edits the table through that port and never holds the file |
 | `sites/shared/hawser.js` | Hawser, copied from Port Authority: remote objects over a `MessagePort`, with an allow list, revocation and errors that keep their class. `test/hawser.unit.mjs` comes with it |
-| `sites/shared/` | Served on every origin: `base.css`, `app.css`, `detect.js` (feature checks), `refs.js` (MDN and spec links, carried over from Port Authority) |
-| `src/worker.js` | Cloudflare Worker: picks a site folder by hostname, serves `/_sites.js` (where every site lives), and catches a POST share that arrives before the service worker is running |
+| `sites/shared/` | Served on every origin: `base.css`, `app.css`, `detect.js` (feature checks), `clipboard-format.js` (Web Custom Format encoder/decoder), `refs.js` (MDN and spec links) |
+| `src/worker.js` | Cloudflare Worker: picks a site folder by hostname, serves `/_sites.js`, serves dynamic `/.well-known/web-app-origin-association` and Notes' dynamic manifest fields (`scope_extensions`, `related_applications`), and catches POST shares that arrive before a service worker is running |
 | `scripts/icons.mjs` | Writes each app's PNG icons |
 
 ## Origins

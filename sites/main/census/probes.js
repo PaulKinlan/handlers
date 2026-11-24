@@ -196,6 +196,20 @@ export const PROBES = {
       ? { gap: false, text: `LaunchParams has ${list(members)}. Check whether ${list(back)} can answer the app that started the launch.` }
       : { gap: true, text: `LaunchParams has ${list(members)}. Nothing on it leads back to the app or page that started the launch, so the app that is opened cannot answer.` };
   },
+  async "scope-assoc"() {
+    try {
+      const waoa = await (await fetch("/.well-known/web-app-origin-association")).json();
+      const agreed = Object.keys(waoa).includes(OTHER + "/");
+      return {
+        gap: true,
+        text: agreed
+          ? `This origin publishes /.well-known/web-app-origin-association agreeing with ${otherHost}, and Notes lists this origin in scope_extensions — yet no script API tells a page whether the browser accepted the association or whether a link will open in the app or a tab.`
+          : `/.well-known/web-app-origin-association is present, and no script API reports whether a link into another origin will open in an app or a tab.`,
+      };
+    } catch (err) {
+      return { gap: null, text: `Could not fetch /.well-known/web-app-origin-association: ${err.message}.` };
+    }
+  },
 };
 
 // Fill every element that names a check. An element with data-short gets

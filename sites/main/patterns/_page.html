@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>An integration pattern | Handlers</title>
-  <meta name="description" content="One way a web app hooks into the operating system or another app: a live demo, how it works, what to build with it and what goes wrong.">
+  <meta name="description" content="One way a web app hooks into the operating system or another app: a workflow diagram, a live demo, how it works, what to build with it and what goes wrong.">
+  <meta name="theme-color" content="#171a18">
   <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/app.css">
   <link rel="stylesheet" href="/patterns/patterns.css">
@@ -13,14 +14,28 @@
   <div class="wrap">
     <header class="site-bar">
       <a class="wordmark" href="/">Handlers</a>
-      <nav><a href="/patterns/" aria-current="true">All patterns</a><a id="notes-link" href="#">Notes app</a><a id="tasks-link" href="#">Tasks app</a></nav>
+      <nav>
+        <a href="/patterns/" aria-current="true">Patterns</a>
+        <a href="/census/">Browser census</a>
+        <a href="/missing/">What is missing</a>
+        <a id="notes-link" href="#">Notes</a>
+        <a id="tasks-link" href="#">Tasks</a>
+      </nav>
     </header>
     <main id="main">
-      <div class="stack" style="padding-block:2rem 1rem; --gap:.6rem">
+      <div class="stack" style="padding-block:1.8rem 0.5rem; --gap:.65rem">
         <p class="crumb small"><a href="/patterns/">Patterns</a> / <span id="group"></span> <span id="state" class="badge"></span></p>
-        <h1 style="font-size:var(--step-2)" id="title">Loading</h1>
+        <h1 style="font-size:var(--step-3)" id="title">Loading</h1>
         <p id="blurb"></p>
       </div>
+      <nav class="jump-nav" id="jump" aria-label="On this page" hidden>
+        <a href="#diagram">Workflow</a>
+        <a href="#demo">Try it</a>
+        <a href="#how">How it works</a>
+        <a href="#build">What to build</a>
+        <a href="#traps">What goes wrong</a>
+      </nav>
+      <section id="diagram"></section>
       <section id="demo"></section>
       <div class="deep" id="deep"></div>
       <nav class="pager" id="pager" aria-label="More patterns"></nav>
@@ -29,6 +44,7 @@
   <script type="module">
     import { all, groups, plain } from "/patterns/all.js";
     import { mount } from "/patterns/demos.js";
+    import { renderDiagram } from "/patterns/diagrams.js";
     import { sites } from "/_sites.js";
 
     const $ = (id) => document.getElementById(id);
@@ -48,10 +64,13 @@
       document.querySelector('meta[name="description"]').content = plain(p.blurb).slice(0, 180);
       $("group").innerHTML = `<a href="/patterns/#${p.group}">${groups.find((g) => g.id === p.group).title}</a>`;
       $("state").textContent = p.state === "live" ? "Live demo" : "Planned";
+      $("state").classList.toggle("is-live", p.state === "live");
       $("title").innerHTML = p.title;
       $("blurb").innerHTML = p.blurb;
+      $("jump").hidden = false;
 
-      // The four parts: the thing running, how it works, what to build, what goes wrong.
+      // The four parts (plus the workflow diagram): the thing running, how it works, what to build, what goes wrong.
+      $("diagram").innerHTML = renderDiagram(p.id);
       mount($("demo"), p, sites);
       const parts = [];
       parts.push(`<section id="how"><h2>How it works</h2><div class="stack" style="--gap:.9rem">${p.how.map((t) => `<p>${t}</p>`).join("")}</div></section>`);
@@ -60,7 +79,7 @@
       const more = [...(p.links || []), ...(p.blog || []).map(([t, h]) => [`${t} (Paul's blog)`, h]), ...(p.pa || [])];
       if (more.length) parts.push(`<section id="sources"><h2>Sources and further reading</h2>${links(more)}</section>`);
       const related = (p.related || []).map((r) => all.find((q) => q.id === r)).filter(Boolean);
-      if (related.length) parts.push(`<section id="related"><h2>Read next</h2><ul class="cards">${related.map((r) => `<li><a href="/patterns/${r.id}/"><strong>${r.title}</strong><span>${plain(r.blurb).split(". ")[0]}.</span></a></li>`).join("")}</ul></section>`);
+      if (related.length) parts.push(`<section id="related"><h2>Read next</h2><ul class="cards">${related.map((r) => `<li><a href="/patterns/${r.id}/"><strong>${r.title}</strong><span>${plain(r.blurb).split(". ")[0]}.</span><div class="card-meta"><span class="${r.state}">${r.state === "live" ? "Live demo" : "Planned"}</span><span>Diagram →</span></div></a></li>`).join("")}</ul></section>`);
       $("deep").innerHTML = parts.join("");
 
       const prev = all[index - 1], next = all[index + 1];

@@ -23,12 +23,12 @@ const TYPES = {
   png: "image/png", ico: "image/x-icon", md: "text/markdown; charset=utf-8",
   webmanifest: "application/manifest+json",
   // The demo file types. They are the types the apps list under file_handlers.
-  webnote: "application/x-webnote", webtasks: "application/x-webtasks", csv: "text/csv; charset=utf-8",
+  webnote: "application/x-webnote", webtasks: "application/x-webtasks", census: "application/x-census", csv: "text/csv; charset=utf-8",
 };
 
 // Files of these types are offered as downloads, so that the operating system,
 // not the browser tab, decides what opens them.
-const DOWNLOAD = new Set(["webnote", "webtasks", "csv"]);
+const DOWNLOAD = new Set(["webnote", "webtasks", "census", "csv"]);
 
 export function label(host) { return host.split(":")[0].split(".")[0]; }
 export function siteFor(host) { return LABELS[label(host)] || "main"; }
@@ -96,13 +96,39 @@ export default {
       return new Response(body, { headers: { "content-type": TYPES.js, "access-control-allow-origin": "*", "cache-control": "no-cache" } });
     }
 
+    // Two-way handshake for scope_extensions: the hub agrees to let the
+    // installed Notes app capture links under /patterns/scope-extensions/.
+    if (url.pathname === "/.well-known/web-app-origin-association" && site === "main") {
+      const origins = siteOrigins(url, env);
+      const assoc = { [origins.notes + "/"]: { scope: "/patterns/scope-extensions/" } };
+      return new Response(JSON.stringify(assoc, null, 2) + "\n", {
+        headers: { "content-type": TYPES.json, "access-control-allow-origin": "*", "cache-control": "no-cache" },
+      });
+    }
+
+    // Inject the live hub origin into Notes' manifest scope_extensions (and
+    // Notes' own URL into related_applications) so they match locally
+    // (hub.localhost) and deployed (handlers.workers.dev / MAIN_HOST).
+    if ((request.method === "GET" || request.method === "HEAD") && site === "notes" && url.pathname === "/manifest.webmanifest") {
+      const raw = await readAsset(env, "notes/manifest.webmanifest");
+      if (raw) {
+        const origins = siteOrigins(url, env);
+        const manifest = JSON.parse(await new Response(raw).text());
+        manifest.scope_extensions = [{ type: "origin", origin: origins.main }];
+        manifest.related_applications = [{ platform: "webapp", url: origins.notes + "/manifest.webmanifest" }];
+        return new Response(JSON.stringify(manifest, null, 2) + "\n", {
+          headers: { "content-type": TYPES.webmanifest, "access-control-allow-origin": "*", "cache-control": "no-cache" },
+        });
+      }
+    }
+
     // A share target that uses POST is answered by the app's service worker.
     // If the worker is not running yet (the first share after install can
     // arrive before it controls the page), send the person to the app with
     // what was shared in the query, so the share is not lost.
-    if (request.method === "POST" && url.pathname === "/share" && site === "notes") {
+    if (request.method === "POST" && ((site === "notes" && url.pathname === "/share") || (site === "main" && url.pathname === "/census/share-target"))) {
       const form = await request.formData().catch(() => null);
-      const back = new URL("/", url);
+      const back = new URL(site === "main" ? "/census/" : "/", url);
       for (const key of ["title", "text", "url"]) {
         const value = form && form.get(key);
         if (typeof value === "string" && value) back.searchParams.set(key, value.slice(0, 2000));

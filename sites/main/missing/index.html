@@ -6,14 +6,15 @@
   <title>What web app integration is missing | Handlers</title>
   <meta name="description" content="What I want browser vendors to build or fix in how web apps are opened by links, files, shares and other apps. Each gap is checked in your browser, with the evidence and what it would let people build.">
   <link rel="manifest" href="/census/manifest.json">
+  <meta name="theme-color" content="#171a18">
   <link rel="stylesheet" href="/base.css">
-    <link rel="stylesheet" href="/census/census.css">
+  <link rel="stylesheet" href="/census/census.css">
 </head>
 <body>
   <div class="wrap">
     <header class="site-bar">
       <a class="wordmark" href="/">Handlers</a>
-      <nav><a href="/patterns/">All patterns</a><a href="/census/">Census</a><a href="/missing/" aria-current="page">What is missing</a><a href="https://port-authority.dev">Port Authority</a></nav>
+      <nav><a href="/patterns/">Patterns</a><a href="/census/">Browser census</a><a href="/missing/" aria-current="page">What is missing</a></nav>
     </header>
     <div class="stack" style="padding-block:2.5rem 1.5rem; --gap:1.1rem">
       <h1 style="font-size:var(--step-3)">What web app integration is missing</h1>
@@ -172,7 +173,8 @@
         <div class="item">
           <h3>An app's scope is one origin, and its links cannot be checked</h3>
           <h4>What is missing</h4>
-          <p>An installed app covers addresses under its <code>scope</code> on one origin. <code>scope_extensions</code> would let it take in other origins that agree to it, so that ordinary <code>https:</code> links open the app. A page cannot check whether a given link will open in an app or a tab. I have not built a check for this yet: it needs a second origin that publishes the agreement file.</p>
+          <p>An installed app covers addresses under its <code>scope</code> on one origin. <code>scope_extensions</code> lets it take in other origins that agree to it via <code>/.well-known/web-app-origin-association</code>, so that ordinary <code>https:</code> links open the app. Even when both origins publish the agreement (as <a href="/patterns/scope-extensions/">the Notes app and this Hub now do</a>), a page cannot check whether the browser accepted it or whether a given link will open in an app or a tab.</p>
+          <div class="now"><b>In your browser, now</b><span data-probe="scope-assoc"></span></div>
           <h4>How I know</h4>
           <ul><li>The <a href="https://github.com/WICG/manifest-incubations/blob/gh-pages/scope_extensions-explainer.md">scope_extensions explainer</a>, and my older post on <a href="https://paul.kinlan.me/deep-web-app-linking/">deep web app linking</a>.</li></ul>
         </div>

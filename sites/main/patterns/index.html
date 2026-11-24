@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Integration patterns | Handlers</title>
-  <meta name="description" content="Every way a web app can hook into the operating system and other apps, each with a demo, how it works, what to build and what goes wrong.">
+  <meta name="description" content="Every way a web app can hook into the operating system and other apps, each with a workflow diagram, a live demo where one exists, how it works, what to build and what goes wrong.">
+  <meta name="theme-color" content="#171a18">
   <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/patterns/patterns.css">
 </head>
@@ -12,19 +13,24 @@
   <div class="wrap">
     <header class="site-bar">
       <a class="wordmark" href="/">Handlers</a>
-      <nav><a href="/patterns/" aria-current="true">All patterns</a></nav>
+      <nav>
+        <a href="/patterns/" aria-current="page">Patterns</a>
+        <a href="/census/">Browser census</a>
+        <a href="/missing/">What is missing</a>
+      </nav>
     </header>
     <main id="main">
-      <div class="stack" style="padding-block:2rem 1.5rem">
+      <div class="stack" style="padding-block:2rem 0.5rem; --gap:0.75rem">
         <h1 style="font-size:var(--step-3)">Integration patterns</h1>
-        <p>Each page has a live demo where one exists, how it works, what you could build with it, and what goes wrong.</p>
+        <p class="muted">Every page pairs a visual workflow diagram with a live multi-origin demo (where one exists), how it works under the hood, what you could build with it, and what goes wrong.</p>
       </div>
-      <div id="groups"></div>
+      <div id="explorer"></div>
     </main>
+    <footer class="small muted">Handlers (working name) — by <a href="https://paul.kinlan.me">Paul Kinlan</a>.</footer>
   </div>
   <script type="module">
-    import { groups, byGroup, plain } from "/patterns/all.js";
-    document.getElementById("groups").innerHTML = groups.map((g) => `<section class="group" id="${g.id}"><h2>${g.title}</h2><p>${g.blurb}</p><ul class="cards">${byGroup(g.id).map((p) => `<li><a href="/patterns/${p.id}/"><strong>${p.title}</strong><span>${plain(p.blurb).split(". ")[0]}.</span><br><span class="${p.state}">${p.state === "live" ? "Live demo" : "Planned"}</span></a></li>`).join("")}</ul></section>`).join("");
+    import { mountExplorer } from "/patterns/explorer.js";
+    mountExplorer(document.getElementById("explorer"));
   </script>
 </body>
 </html>

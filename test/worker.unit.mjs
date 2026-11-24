@@ -64,6 +64,9 @@ test("sample files are downloads with their own type", async () => {
   const res = await get("http://hub.localhost/samples/hello.webnote");
   assert.equal(res.headers.get("content-type"), "application/x-webnote");
   assert.match(res.headers.get("content-disposition"), /attachment/);
+  const census = await get("http://hub.localhost/census/sample.census");
+  assert.equal(census.headers.get("content-type"), "application/x-census");
+  assert.match(census.headers.get("content-disposition"), /attachment/);
 });
 
 test("a share that reaches the server is sent on to the app", async () => {
@@ -72,8 +75,18 @@ test("a share that reaches the server is sent on to the app", async () => {
   const res = await get("http://notes.localhost/share", { method: "POST", body: form });
   assert.equal(res.status, 303);
   const to = new URL(res.headers.get("location"));
+  assert.equal(to.pathname, "/");
   assert.equal(to.searchParams.get("text"), "a & b");
   assert.equal(to.searchParams.get("via"), "server");
+
+  const censusForm = new FormData();
+  censusForm.set("title", "Census"); censusForm.set("url", "https://example.com/");
+  const censusRes = await get("http://hub.localhost/census/share-target", { method: "POST", body: censusForm });
+  assert.equal(censusRes.status, 303);
+  const censusTo = new URL(censusRes.headers.get("location"));
+  assert.equal(censusTo.pathname, "/census/");
+  assert.equal(censusTo.searchParams.get("title"), "Census");
+  assert.equal(censusTo.searchParams.get("via"), "server");
 });
 
 test("paths that climb out of a site are refused", async () => {
@@ -90,5 +103,55 @@ test("every pattern has the four parts and a known group", async () => {
     for (const key of ["title", "blurb", "how", "build", "traps"]) assert.ok(p[key] && p[key].length, `${p.id}.${key}`);
     for (const r of p.related || []) assert.ok(ids.has(r), `${p.id} relates to missing ${r}`);
   }
+});
+
+test("every live pattern has a demo and every check id exists in detect.js", async () => {
+  const { all } = await import("../sites/main/patterns/all.js");
+  const { probes } = await import("../sites/shared/detect.js");
+  const demosSrc = readFileSync(new URL("main/patterns/demos.js", root), "utf8");
+  const probeIds = new Set(probes.map((p) => p.id));
+
+  for (const p of all) {
+    if (p.state === "live") {
+      const hasEntry = new RegExp(`["']?${p.id.replace(/-/g, "\\-")}["']?\\s*:\\s*\\(`).test(demosSrc);
+      assert.ok(hasEntry, `live pattern "${p.id}" is missing from demos.js`);
+    }
+  }
+  for (const match of demosSrc.matchAll(/checks:\s*\[([^\]]+)\]/g)) {
+    for (const id of match[1].matchAll(/["']([^"']+)["']/g)) {
+      assert.ok(probeIds.has(id[1]), `demos.js references unknown probe "${id[1]}"`);
+    }
+  }
+});
+
+test("every pattern has a valid workflow diagram", async () => {
+  const { all } = await import("../sites/main/patterns/all.js");
+  const { diagrams, renderDiagram } = await import("../sites/main/patterns/diagrams.js");
+  for (const p of all) {
+    const spec = diagrams[p.id];
+    assert.ok(spec, `pattern "${p.id}" is missing a diagram`);
+    assert.ok(spec.actors.length >= 2 && spec.steps.length >= 1, p.id);
+    for (const s of spec.steps) {
+      assert.ok(s.from >= 0 && s.from < spec.actors.length, `${p.id} step.from out of range`);
+      assert.ok(s.to >= 0 && s.to < spec.actors.length, `${p.id} step.to out of range`);
+    }
+    const html = renderDiagram(p.id);
+    assert.match(html, /<svg /);
+    assert.match(html, /<figcaption/);
+  }
+});
+
+test("scope_extensions, related_applications and web-app-origin-association match locally and deployed", async () => {
+  const localManifest = await (await get("http://notes.localhost:8787/manifest.webmanifest")).json();
+  assert.deepEqual(localManifest.scope_extensions, [{ type: "origin", origin: "http://hub.localhost:8787" }]);
+  assert.deepEqual(localManifest.related_applications, [{ platform: "webapp", url: "http://notes.localhost:8787/manifest.webmanifest" }]);
+  const localAssoc = await (await get("http://hub.localhost:8787/.well-known/web-app-origin-association")).json();
+  assert.deepEqual(localAssoc["http://notes.localhost:8787/"], { scope: "/patterns/scope-extensions/" });
+
+  const prodManifest = await (await get("https://ph-notes.kinlan-test.workers.dev/manifest.webmanifest")).json();
+  assert.deepEqual(prodManifest.scope_extensions, [{ type: "origin", origin: "https://handlers.kinlan-test.workers.dev" }]);
+  assert.deepEqual(prodManifest.related_applications, [{ platform: "webapp", url: "https://ph-notes.kinlan-test.workers.dev/manifest.webmanifest" }]);
+  const prodAssoc = await (await get("https://handlers.kinlan-test.workers.dev/.well-known/web-app-origin-association")).json();
+  assert.deepEqual(prodAssoc["https://ph-notes.kinlan-test.workers.dev/"], { scope: "/patterns/scope-extensions/" });
 });
 

@@ -3,13 +3,14 @@
 // (POST to /share, answered by sw.js), or the "New note" shortcut.
 import { sites } from "/_sites.js";
 import { render } from "/detect.js";
+import { TASKS_MIME, decodeTasks } from "/clipboard-format.js";
 
 const $ = (id) => document.getElementById(id);
 const editor = $("editor");
 let handle = null; // the file this note was opened from, if any
 
 $("hub-link").href = sites.main;
-render($("checks"), ["rph", "launchQueue", "launchParams", "picker", "standalone"]);
+render($("checks"), ["rph", "launchQueue", "launchParams", "picker", "dropHandle", "clipboardCustom", "standalone"]);
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
 
 function arrive(how, detail) {
@@ -106,6 +107,75 @@ $("open").onclick = async () => {
     show(await file.text(), file.name, fileHandle);
     arrive("file picker", file.name);
   } catch {}
+};
+
+// Dragging a file onto the editor panel gives a FileSystemFileHandle in
+// Chromium, so Save writes back to the dropped file instead of downloading.
+const panel = $("editor-panel");
+panel.addEventListener("dragover", (e) => {
+  if ([...e.dataTransfer.types].includes("Files")) { e.preventDefault(); panel.classList.add("drop-over"); }
+});
+panel.addEventListener("dragleave", (e) => {
+  if (!panel.contains(e.relatedTarget)) panel.classList.remove("drop-over");
+});
+panel.addEventListener("drop", async (e) => {
+  e.preventDefault();
+  panel.classList.remove("drop-over");
+  const item = [...(e.dataTransfer?.items || [])].find((i) => i.kind === "file");
+  if (!item) return;
+  try {
+    // Must request the handle synchronously before the drop event finishes.
+    const handlePromise = typeof item.getAsFileSystemHandle === "function" ? item.getAsFileSystemHandle() : null;
+    const fallbackFile = item.getAsFile();
+    const dropped = handlePromise ? await handlePromise : null;
+    if (dropped?.kind === "file") {
+      const file = await dropped.getFile();
+      show(await file.text(), file.name, dropped);
+      arrive("drop (handle)", `${file.name}, ${file.size} bytes — writable handle`);
+    } else if (dropped?.kind === "directory") {
+      $("save-state").textContent = `Dropped folder "${dropped.name}". Drop a single note file to edit it.`;
+      arrive("drop (directory)", dropped.name);
+    } else if (fallbackFile) {
+      show(await fallbackFile.text(), fallbackFile.name, null);
+      $("save-state").textContent = "Opened as a read-only copy (this browser did not give a file handle).";
+      arrive("drop (copy)", `${fallbackFile.name}, ${fallbackFile.size} bytes — no handle`);
+    }
+  } catch (err) {
+    $("save-state").textContent = "Could not open dropped file: " + err.message;
+  }
+});
+
+// Read a structured task list copied by the Tasks app using a Web Custom Format,
+// falling back to text/plain when the browser or clipboard only has plain text.
+$("paste-structured").onclick = async () => {
+  if (!navigator.clipboard?.read) return ($("save-state").textContent = "Async clipboard read() is not available here.");
+  try {
+    const items = await navigator.clipboard.read();
+    for (const item of items) {
+      if (item.types.includes(TASKS_MIME)) {
+        const raw = await (await item.getType(TASKS_MIME)).text();
+        const parsed = decodeTasks(raw);
+        if (parsed) {
+          show(parsed.markdown, "Tasks from clipboard");
+          $("save-state").textContent = `Pasted ${parsed.tasks.length} task(s) via custom format ${TASKS_MIME}.`;
+          arrive("clipboard (custom)", `${parsed.tasks.length} task(s) (${parsed.open} open, ${parsed.done} done) from ${parsed.app}`);
+          return;
+        }
+      }
+    }
+    for (const item of items) {
+      if (item.types.includes("text/plain")) {
+        const text = await (await item.getType("text/plain")).text();
+        show(text, "Plain text from clipboard");
+        $("save-state").textContent = "No custom task format on the clipboard; pasted text/plain instead.";
+        arrive("clipboard (plain)", `${text.length} characters`);
+        return;
+      }
+    }
+    $("save-state").textContent = "Nothing readable on the clipboard.";
+  } catch (err) {
+    $("save-state").textContent = "Could not read clipboard: " + err.message;
+  }
 };
 
 $("download").onclick = () => {

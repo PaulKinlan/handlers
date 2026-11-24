@@ -1,14 +1,63 @@
-/* Shared by the demo apps. Each sets its own --accent. */
-.app-head { padding: 2rem 0 1.2rem; display: grid; gap: 0.8rem; }
-.app-head h1 { font-size: var(--step-3); font-stretch: 100%; letter-spacing: -0.03em; line-height: 1; }
-.note { border-left: 6px solid var(--accent); padding: 0.2rem 0 0.2rem 1rem; }
-.cols { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); align-items: start; padding-bottom: 4rem; }
-.cols h2 { font-size: var(--step-1); letter-spacing: -0.01em; margin-bottom: 0.7rem; }
-.row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
-.checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; font-size: var(--step--1); }
-.arrived { background: color-mix(in srgb, var(--accent) 16%, var(--panel)); border-radius: 10px; padding: 0.8rem 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font: var(--step--1)/1.5 var(--mono); }
-textarea.editor { min-height: 14rem; font: var(--step-0)/1.5 var(--mono); resize: vertical; }
-.items { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.4rem; }
-.items li { display: flex; gap: 0.6rem; align-items: center; padding: 0.45rem 0; border-top: 1px solid var(--line); }
+/* Shared by the independent-origin demo apps. Each sets its own --accent. */
+.app-head { padding: 1.75rem 0 1.25rem; display: grid; gap: 0.75rem; }
+.app-head h1 { font-size: var(--step-3); letter-spacing: -0.035em; line-height: 1.05; }
+.note {
+  border-left: 3px solid var(--accent);
+  padding: 0.25rem 0 0.25rem 1rem;
+  color: var(--muted);
+}
+.cols {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  align-items: start;
+  padding-bottom: 3.5rem;
+}
+.cols h2 { font-size: var(--step-1); letter-spacing: -0.02em; margin-bottom: 0.7rem; }
+.row { display: flex; gap: 0.55rem; flex-wrap: wrap; align-items: center; }
+.checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.45rem; font-size: var(--step--1); }
+.checks li { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.15rem; }
+.arrived {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 1rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: var(--step--1)/1.5 var(--mono);
+}
+textarea.editor { min-height: 14rem; font: var(--step--1)/1.6 var(--mono); resize: vertical; }
+.panel.drop-over {
+  outline: 2px dashed var(--accent);
+  outline-offset: -5px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--panel));
+}
+.items { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.25rem; }
+.items li { display: flex; gap: 0.65rem; align-items: center; padding: 0.5rem 0; border-top: 1px solid var(--line); }
 .items li:first-child { border-top: 0; }
 .items li.done span { text-decoration: line-through; color: var(--muted); }
+
+/* Window Controls Overlay title bar: active only when the installed app
+   gets the title-bar strip from the OS. */
+.wco-bar {
+  display: none;
+  position: fixed;
+  left: env(titlebar-area-x, 0);
+  top: env(titlebar-area-y, 0);
+  width: env(titlebar-area-width, 100%);
+  height: env(titlebar-area-height, 36px);
+  padding: 0 0.9rem;
+  align-items: center;
+  gap: 0.7rem;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: 700 var(--step--1)/1 var(--display);
+  z-index: 20;
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+.wco-bar a, .wco-bar button { -webkit-app-region: no-drag; app-region: no-drag; }
+@media (display-mode: window-controls-overlay) {
+  .wco-bar { display: flex; }
+  body { padding-top: env(titlebar-area-height, 36px); }
+}

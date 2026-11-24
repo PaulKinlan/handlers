@@ -12,6 +12,7 @@ const VIA = {
   "manifest-protocol": "a web+census link, through protocol_handlers in the manifest",
   file: "a file opened from the operating system, through file_handlers in the manifest",
   share: "a share from another app, through share_target in the manifest",
+  server: "a share that reached the server before the service worker was running",
   shortcut: "one of the shortcuts in the manifest",
   start: "the installed app's own icon",
 };
@@ -36,6 +37,10 @@ export async function readLaunch(log) {
   if (via && VIA[via]) {
     let line = `This page was opened by ${VIA[via]}.`;
     if (params.has("u")) line += ` The address it was given: <code>${esc(params.get("u"))}</code>.`;
+    if (via === "server") {
+      const bits = ["title", "text", "url"].filter((k) => params.get(k)).map((k) => `${k} “${esc(params.get(k))}”`);
+      if (bits.length) line += ` Shared: ${bits.join(", ")}.`;
+    }
     log(line);
   }
   // The opener check on /missing/ opens a web+census link in a

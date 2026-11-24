@@ -120,7 +120,7 @@ const linkState = (text, on) => { $("link").innerHTML = `<span class="jack${on ?
 $("send").onclick = () => {
   link?.close();
   waiting = true;
-  win = window.open(`${sites.charts}/`, "pa-chart");
+  win = window.open(`${sites.charts}/`, "handlers-chart");
   if (!win) { waiting = false; log("The browser blocked the window. Allow pop-ups for this site and try again."); return; }
   linkState("Waiting for Charts", false);
   log("Opened Charts and waited for it to say it was ready.");

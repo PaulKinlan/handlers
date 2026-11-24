@@ -3,6 +3,7 @@
 // (GET, so the share is just a query string) and the form.
 import { sites } from "/_sites.js";
 import { render } from "/detect.js";
+import { TASKS_MIME, encodeTasks } from "/clipboard-format.js";
 
 const $ = (id) => document.getElementById(id);
 const KEY = "tasks";
@@ -10,7 +11,7 @@ let tasks = [];
 try { tasks = JSON.parse(localStorage.getItem(KEY)) || []; } catch {}
 
 $("hub-link").href = sites.main;
-render($("checks"), ["rph", "launchQueue", "share", "standalone"]);
+render($("checks"), ["rph", "launchQueue", "share", "badge", "wco", "documentPip", "clipboardCustom", "standalone"]);
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
 
 function arrive(how, detail) {
@@ -32,6 +33,9 @@ function save() {
 }
 
 function draw() {
+  const open = tasks.filter((t) => !t.done).length;
+  const wcoCount = $("wco-count");
+  if (wcoCount) wcoCount.textContent = `${open} open`;
   $("items").innerHTML = "";
   for (const task of tasks) {
     const li = document.createElement("li");
@@ -104,8 +108,64 @@ $("share").onclick = async () => {
   catch (err) { $("state").textContent = err.name === "AbortError" ? "Share sheet closed." : "Not shared: " + err.message; }
 };
 
+$("copy-tasks").onclick = async () => {
+  if (!tasks.length) return ($("state").textContent = "Add a task first, then copy it.");
+  const { plain, json, count } = encodeTasks(tasks);
+  if (!navigator.clipboard?.write || typeof ClipboardItem !== "function") {
+    if (!navigator.clipboard?.writeText) return ($("state").textContent = "Clipboard API is not available here.");
+    try { await navigator.clipboard.writeText(plain); $("state").textContent = `Copied ${count} task(s) as plain text only.`; }
+    catch (err) { $("state").textContent = "Not copied: " + err.message; }
+    return;
+  }
+  const custom = typeof ClipboardItem.supports === "function" && ClipboardItem.supports(TASKS_MIME);
+  const payload = { "text/plain": new Blob([plain], { type: "text/plain" }) };
+  if (custom) payload[TASKS_MIME] = new Blob([json], { type: TASKS_MIME });
+  try {
+    await navigator.clipboard.write([new ClipboardItem(payload)]);
+    $("state").textContent = custom
+      ? `Copied ${count} task(s) with ${TASKS_MIME} and text/plain. Paste into Notes.`
+      : `Copied ${count} task(s) as text/plain (this browser does not support web custom clipboard formats).`;
+  } catch (err) {
+    $("state").textContent = "Not copied: " + err.message;
+  }
+};
+
 $("to-note").onclick = () => {
   location.href = "web+note:" + encodeURIComponent(tasks.filter((t) => !t.done).map((t) => "- " + t.text).join("\n"));
+};
+
+// Pop the live task list into an always-on-top Document Picture-in-Picture window.
+let pipWin = null;
+$("pip").onclick = async () => {
+  if (pipWin && !pipWin.closed) { pipWin.close(); return; }
+  if (!window.documentPictureInPicture?.requestWindow) {
+    $("state").textContent = "Document Picture-in-Picture is not available in this browser.";
+    return;
+  }
+  const panel = $("tasks-panel");
+  const slot = $("tasks-slot");
+  try {
+    pipWin = await window.documentPictureInPicture.requestWindow({ width: 360, height: 440 });
+    for (const node of document.querySelectorAll('link[rel="stylesheet"], style')) {
+      pipWin.document.head.append(node.cloneNode(true));
+    }
+    pipWin.document.body.style.padding = "0.8rem";
+    pipWin.document.body.append(panel);
+    $("pip").textContent = "Dock back";
+    const placeholder = document.createElement("div");
+    placeholder.className = "panel muted small";
+    placeholder.textContent = "Tasks is popped out in an always-on-top floating window. Close it or press Dock back to bring it home.";
+    slot.append(placeholder);
+    arrive("documentPictureInPicture", "popped out into floating window");
+    pipWin.addEventListener("pagehide", () => {
+      placeholder.remove();
+      slot.append(panel);
+      $("pip").textContent = "Pop out";
+      pipWin = null;
+    }, { once: true });
+  } catch (err) {
+    $("state").textContent = "Could not open Picture-in-Picture window: " + err.message;
+  }
 };
 
 $("download").onclick = () => {

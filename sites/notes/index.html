@@ -6,10 +6,10 @@
   <title>Notes | Handlers</title>
   <meta name="description" content="A demo notes app that handles web+note: links, opens .webnote files and receives shares.">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#f5b700">
+  <meta name="theme-color" content="#b06e00">
   <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/app.css">
-  <style>:root { --accent: var(--yellow); }</style>
+  <style>:root { --accent: #b06e00; --on-accent: #ffffff; }</style>
 </head>
 <body>
   <div class="wrap">
@@ -22,13 +22,14 @@
       <p class="note">A demo app on its own origin. Install it, then open <code>web+note:</code> links, <code>.webnote</code> files and shares with it. What arrived, and how, is listed on the right.</p>
     </section>
     <div class="cols">
-      <section class="panel ruled">
+      <section id="editor-panel" class="panel ruled">
         <h2 id="file-name">Untitled note</h2>
-        <label for="editor" class="small muted">Text</label>
+        <label for="editor" class="small muted">Text — or drop a <code>.webnote</code> / text file here to open it in place</label>
         <textarea id="editor" class="editor" spellcheck="true"></textarea>
         <div class="row" style="margin-top:.8rem">
           <button id="save">Save</button>
           <button id="open" class="quiet">Open a file</button>
+          <button id="paste-structured" class="quiet">Paste from Tasks</button>
           <button id="download" class="quiet">Download as .webnote</button>
           <button id="make-task" class="quiet">Send to Tasks</button>
         </div>

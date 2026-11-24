@@ -6,12 +6,16 @@
   <title>Tasks | Handlers</title>
   <meta name="description" content="A demo task list that handles web+task: links, opens .webtasks files, receives shares and badges its icon.">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#0e9f8e">
+  <meta name="theme-color" content="#1c7c54">
   <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/app.css">
-  <style>:root { --accent: var(--teal); --on-accent: #fff; }</style>
+  <style>:root { --accent: var(--teal); --on-accent: #ffffff; }</style>
 </head>
 <body>
+  <div class="wco-bar" aria-label="Window title bar">
+    <span>Handlers Tasks</span>
+    <span id="wco-count" class="small" style="opacity:.85">0 open</span>
+  </div>
   <div class="wrap">
     <header class="site-bar">
       <a class="wordmark" href="/">Tasks</a>
@@ -19,20 +23,24 @@
     </header>
     <section class="app-head">
       <h1>Tasks</h1>
-      <p class="note">A second demo app on another origin. It takes tasks from <code>web+task:</code> links, <code>.webtasks</code> files and the share sheet, shows the count on its icon when installed, and shares tasks out.</p>
+      <p class="note">A second demo app on another origin. It takes tasks from <code>web+task:</code> links, <code>.webtasks</code> files and the share sheet, shows the count on its icon when installed, draws into its title bar with Window Controls Overlay, pops out via Document PiP, and shares tasks out.</p>
     </section>
     <div class="cols">
-      <section class="panel ruled">
-        <h2>To do</h2>
-        <form id="add" class="row" style="margin-bottom:.8rem"><input type="text" id="new" aria-label="New task" placeholder="A new task" style="flex:1"><button>Add</button></form>
-        <ul id="items" class="items"></ul>
-        <div class="row" style="margin-top:.8rem">
-          <button id="share" class="quiet">Share the list</button>
-          <button id="to-note" class="quiet">Send to Notes</button>
-          <button id="download" class="quiet">Download as .webtasks</button>
-        </div>
-        <p id="state" class="small muted" style="margin-top:.6rem" aria-live="polite"></p>
-      </section>
+      <div id="tasks-slot">
+        <section id="tasks-panel" class="panel ruled">
+          <h2>To do</h2>
+          <form id="add" class="row" style="margin-bottom:.8rem"><input type="text" id="new" aria-label="New task" placeholder="A new task" style="flex:1"><button>Add</button></form>
+          <ul id="items" class="items"></ul>
+          <div class="row" style="margin-top:.8rem">
+            <button id="share" class="quiet">Share the list</button>
+            <button id="copy-tasks" class="quiet">Copy structured</button>
+            <button id="pip" class="quiet">Pop out</button>
+            <button id="to-note" class="quiet">Send to Notes</button>
+            <button id="download" class="quiet">Download as .webtasks</button>
+          </div>
+          <p id="state" class="small muted" style="margin-top:.6rem" aria-live="polite"></p>
+        </section>
+      </div>
       <section class="panel">
         <h2>What arrived</h2>
         <ul id="arrivals" class="log" aria-live="polite"><li class="muted">Nothing yet.</li></ul>

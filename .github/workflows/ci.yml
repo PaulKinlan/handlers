@@ -40,3 +40,4 @@ jobs:
             sleep 1
           done
           node test/files.mjs
+          node test/census.mjs

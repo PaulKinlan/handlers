@@ -5,7 +5,7 @@
 import { createRequire } from "node:module";
 const { chromium } = createRequire(import.meta.url)("playwright");
 const LIVE = process.env.LIVE;
-const root = LIVE ? process.env.LIVE_MAIN || `https://portauthority.${LIVE}` : "http://hub.localhost:8787";
+const root = LIVE ? process.env.LIVE_MAIN || `https://handlers.${LIVE}` : "http://hub.localhost:8787";
 const shots = process.argv[2];
 let failed = 0;
 const check = (name, ok, extra = "") => { console.log(`${ok ? "ok  " : "FAIL"} ${name}${extra ? " " + extra : ""}`); if (!ok) failed++; };
