@@ -171,3 +171,22 @@ test("scope_extensions, related_applications and web-app-origin-association matc
   assert.deepEqual(domainAssoc["https://notes.beyondthetab.dev/"], { scope: "/patterns/scope-extensions/" });
 });
 
+test("SKILL.md and /skill/ are served and every pattern link in SKILL.md exists", async () => {
+  const { all } = await import("../sites/main/patterns/all.js");
+  const ids = new Set(all.map((p) => p.id));
+
+  const page = await get("http://hub.localhost/skill/");
+  assert.equal(page.status, 200);
+  assert.match(page.headers.get("content-type"), /text\/html/);
+
+  const res = await get("http://hub.localhost/SKILL.md");
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get("content-type"), /text\/markdown/);
+  const md = await res.text();
+  assert.match(md, /^---\nname:\s+beyond-the-tab-integration-audit\ndescription:/);
+
+  const referenced = [...md.matchAll(/https:\/\/beyondthetab\.dev\/patterns\/([a-z0-9-]+)\//g)].map((m) => m[1]);
+  assert.equal(new Set(referenced).size, all.length, "SKILL.md should reference every pattern in all.js");
+  for (const id of referenced) assert.ok(ids.has(id), `SKILL.md links to unknown pattern "${id}"`);
+});
+

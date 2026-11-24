@@ -51,6 +51,19 @@
       font-size: var(--step--1);
     }
     .quick-try-links { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; font-family: var(--mono); font-size: 0.8rem; }
+    .skill-banner {
+      margin-block: 0.5rem 1.75rem;
+      border-left: 4px solid var(--accent);
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      align-items: center;
+    }
+    @media (max-width: 820px) { .skill-banner { grid-template-columns: minmax(0, 1fr); } }
+    .skill-banner-copy { display: grid; gap: 0.5rem; }
+    .skill-banner-copy h2 { font-size: var(--step-1); }
+    .skill-banner-actions { display: grid; gap: 0.55rem; justify-items: start; }
+    .skill-banner-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
   </style>
 </head>
 <body>
@@ -59,6 +72,7 @@
       <a class="wordmark" href="/">Beyond the Tab</a>
       <nav>
         <a href="/patterns/">Patterns</a>
+        <a href="/skill/">Agent Skill</a>
         <a href="/census/">Browser census</a>
         <a href="/missing/">What is missing</a>
       </nav>
@@ -71,9 +85,9 @@
         <p class="hero-lead">Protocol schemes, file handlers, launch queues, share targets, window chrome, Document PiP, and cross-origin handoffs — each explained with a workflow diagram and a live multi-origin demo.</p>
         <p class="muted">Every manifest registration belongs to an origin, so this lab runs four independent demo apps on separate origins alongside a live browser census and platform gap audit.</p>
         <div class="hero-actions">
-          <a class="button accent" href="#explorer">Browse patterns</a>
-          <a class="button quiet" href="/census/">Run browser census</a>
-          <a class="button quiet" href="/missing/">Platform gaps</a>
+          <a class="button accent" href="/skill/">Get Agent SKILL.md</a>
+          <a class="button quiet" href="#explorer">Browse patterns</a>
+          <a class="button quiet" href="/census/">Browser census</a>
         </div>
       </div>
 
@@ -125,6 +139,23 @@
       </aside>
     </section>
 
+    <section class="panel ruled skill-banner" aria-label="Agent integration audit skill">
+      <div class="skill-banner-copy">
+        <span class="hero-eyebrow">Agent Skill · /SKILL.md</span>
+        <h2>Audit your own web app with your coding agent</h2>
+        <p class="small muted">Give your agent our <code>SKILL.md</code> to inspect your codebase, manifest, service worker, docs, and plans—evaluating every OS integration pattern here (plus optional ChromeOS checks) and returning a prioritized report of what makes sense for your app and what to skip.</p>
+      </div>
+      <div class="skill-banner-actions">
+        <div class="skill-banner-buttons">
+          <button type="button" id="home-copy-skill" class="accent">Copy SKILL.md</button>
+          <button type="button" id="home-copy-prompt" class="quiet">Copy agent prompt</button>
+          <a class="button quiet" href="/skill/">Read &amp; install</a>
+          <a class="button quiet" href="/SKILL.md">Raw file</a>
+        </div>
+        <span id="home-skill-status" class="small muted" aria-live="polite">Works with Claude Code, Cursor, Gemini CLI, Codex &amp; Antigravity.</span>
+      </div>
+    </section>
+
     <main id="explorer" aria-label="Pattern catalog"></main>
 
     <footer class="small muted">
@@ -139,6 +170,26 @@
     document.getElementById("reader").href = sites.reader;
     document.getElementById("charts").href = sites.charts;
     mountExplorer(document.getElementById("explorer"));
+
+    const skillStatus = document.getElementById("home-skill-status");
+    const agentPrompt = `Read ${location.origin}/SKILL.md and audit this codebase, its docs, and its plans for OS and cross-app web integration opportunities. Ask me if platform scope (including ChromeOS) is unclear, then return a prioritized report of recommended next steps and what to skip.`;
+    document.getElementById("home-copy-skill").addEventListener("click", async () => {
+      try {
+        const md = await (await fetch("/SKILL.md")).text();
+        await navigator.clipboard.writeText(md);
+        skillStatus.textContent = "Copied SKILL.md to your clipboard.";
+      } catch (err) {
+        skillStatus.textContent = "Could not copy automatically — open /SKILL.md to copy.";
+      }
+    });
+    document.getElementById("home-copy-prompt").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(agentPrompt);
+        skillStatus.textContent = "Copied the one-line agent prompt to your clipboard.";
+      } catch (err) {
+        skillStatus.textContent = "Could not copy automatically — open /skill/ to copy.";
+      }
+    });
   </script>
 </body>
 </html>

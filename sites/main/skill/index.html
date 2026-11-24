@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Skill (SKILL.md) | Beyond the Tab</title>
+  <meta name="description" content="Drop SKILL.md into your coding agent to audit your web app's codebase, manifest, docs, and plans for OS and cross-app integration opportunities.">
+  <meta name="theme-color" content="#171a18">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/patterns/patterns.css">
+  <style>
+    .skill-hero { padding-block: clamp(1.8rem, 4.5vw, 3rem) 1.5rem; display: grid; gap: 1rem; }
+    .skill-eyebrow { font: 600 0.78rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+    .skill-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; padding-top: 0.25rem; }
+    .install-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); margin-block: 1rem 1.75rem; }
+    .install-card { display: grid; gap: 0.65rem; align-content: start; }
+    .install-card h2 { font-size: var(--step-1); }
+    .cmd-box { font: var(--step--1)/1.5 var(--mono); padding: 0.75rem 0.9rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+    .skill-preview { display: grid; gap: 0.75rem; margin-bottom: 2.5rem; }
+    .skill-preview-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; }
+    .skill-preview pre { max-height: 36rem; overflow: auto; font-size: 0.82rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-bar">
+      <a class="wordmark" href="/">Beyond the Tab</a>
+      <nav>
+        <a href="/patterns/">Patterns</a>
+        <a href="/skill/" aria-current="page">Agent Skill</a>
+        <a href="/census/">Browser census</a>
+        <a href="/missing/">What is missing</a>
+      </nav>
+    </header>
+
+    <section class="skill-hero">
+      <span class="skill-eyebrow">SKILL.md · Agent-Ready Integration Audit</span>
+      <h1 style="font-size:var(--step-3)">Audit your site for OS integration opportunities</h1>
+      <p style="font-size:var(--step-1); max-width:54ch">Drop <code>SKILL.md</code> into Claude Code, Cursor, Gemini CLI, Codex, or Antigravity. Your agent inspects your codebase, manifest, service worker, docs, and plans—evaluates every pattern on Beyond the Tab—and returns a prioritized report of what makes sense (and what to skip).</p>
+      <div class="skill-actions">
+        <button type="button" id="copy-skill" class="accent">Copy SKILL.md</button>
+        <button type="button" id="copy-prompt" class="quiet">Copy one-line prompt</button>
+        <a class="button quiet" href="/SKILL.md" download="SKILL.md">Download SKILL.md</a>
+        <a class="button quiet" href="/SKILL.md">Open raw file</a>
+      </div>
+      <p id="copy-status" class="small muted" aria-live="polite"></p>
+    </section>
+
+    <section class="install-grid" aria-label="Ways to use the skill">
+      <div class="panel install-card">
+        <h2>Option 1: Paste a one-line prompt</h2>
+        <p class="small muted">Fastest way if your agent can fetch URLs directly:</p>
+        <div class="cmd-box" id="prompt-text">Read https://beyondthetab.dev/SKILL.md and audit this codebase, its docs, and its plans for OS and cross-app web integration opportunities. Ask me if platform scope (including ChromeOS) is unclear, then return a prioritized report of recommended next steps and what to skip.</div>
+      </div>
+      <div class="panel install-card">
+        <h2>Option 2: Install as a repo skill</h2>
+        <p class="small muted">Save <code>SKILL.md</code> directly into your project's skills folder:</p>
+        <div class="cmd-box" id="curl-text">mkdir -p .agents/skills/beyond-the-tab &amp;&amp; curl -fsSL https://beyondthetab.dev/SKILL.md -o .agents/skills/beyond-the-tab/SKILL.md</div>
+        <div><button type="button" id="copy-curl" class="quiet tiny">Copy install command</button></div>
+      </div>
+    </section>
+
+    <section class="panel skill-preview">
+      <div class="skill-preview-head">
+        <h2>Full SKILL.md</h2>
+        <span class="small muted">Served directly at <code>/SKILL.md</code></span>
+      </div>
+      <pre id="skill-source">Loading /SKILL.md…</pre>
+    </section>
+
+    <footer class="small muted">
+      Beyond the Tab (<code>beyondthetab.dev</code>) — by <a href="https://paul.kinlan.me">Paul Kinlan</a>.
+    </footer>
+  </div>
+  <script type="module">
+    const sourceEl = document.getElementById("skill-source");
+    const statusEl = document.getElementById("copy-status");
+    const promptText = document.getElementById("prompt-text").textContent.trim();
+    const curlText = document.getElementById("curl-text").textContent.trim();
+    let skillMarkdown = "";
+
+    const loaded = fetch("/SKILL.md").then((r) => r.text()).then((text) => {
+      skillMarkdown = text;
+      sourceEl.textContent = text;
+      return text;
+    }).catch((err) => {
+      sourceEl.textContent = "Could not load /SKILL.md: " + err.message;
+    });
+
+    async function copy(text, label) {
+      try {
+        await navigator.clipboard.writeText(text);
+        statusEl.textContent = `Copied ${label} to your clipboard.`;
+      } catch (err) {
+        statusEl.textContent = `Could not copy automatically (${err.message}). Select and copy from the box below.`;
+      }
+    }
+
+    document.getElementById("copy-skill").addEventListener("click", async () => {
+      const text = skillMarkdown || (await loaded);
+      if (text) copy(text, "SKILL.md");
+    });
+    document.getElementById("copy-prompt").addEventListener("click", () => copy(promptText, "the agent prompt"));
+    document.getElementById("copy-curl").addEventListener("click", () => copy(curlText, "the install command"));
+  </script>
+</body>
+</html>

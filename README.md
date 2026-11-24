@@ -11,7 +11,8 @@ operating system make on an app's behalf.
 
 | Path | What it is |
 | --- | --- |
-| `sites/main/` | The hub: split hero + multi-origin demo launcher, interactive pattern explorer (`explorer.js`), and one page per pattern |
+| `sites/main/` | The hub: split hero + multi-origin demo launcher, prominent Agent Skill banner, interactive pattern explorer (`explorer.js`), and one page per pattern |
+| `sites/main/SKILL.md`, `sites/main/skill/` | Agent Skill (`https://beyondthetab.dev/SKILL.md`) and `/skill/` page for pasting into a coding agent to audit any existing web app's codebase, docs, and plans for OS integration opportunities |
 | `sites/main/patterns/all.js` | Every pattern as data (27 total across 5 groups): state (`live` or `planned`), how it works, what to build, what goes wrong, sources, Paul's related posts, related Port Authority pages |
 | `sites/main/patterns/diagrams.js` | Inline, theme-aware SVG sequence diagrams for every pattern, showing actors, origin boundaries, handoffs, and platform gaps |
 | `sites/main/patterns/_page.html` | Draws `/patterns/<id>/` for every pattern: the workflow diagram, the live demo & browser checks, then how it works, what you could build, and what goes wrong |
