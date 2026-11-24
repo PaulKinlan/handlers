@@ -72,11 +72,11 @@ Cloudflare token. Each Worker has one build trigger, "Deploy on push to main":
 
 | Worker | Deploy command | Address |
 | --- | --- | --- |
-| `handlers` | `npx wrangler deploy` | https://beyondthetab.dev (and https://handlers.kinlan-test.workers.dev) |
-| `ph-notes` | `npx wrangler deploy -c deploy/notes.jsonc` | https://ph-notes.kinlan-test.workers.dev |
-| `ph-tasks` | `npx wrangler deploy -c deploy/tasks.jsonc` | https://ph-tasks.kinlan-test.workers.dev |
-| `ph-reader` | `npx wrangler deploy -c deploy/reader.jsonc` | https://ph-reader.kinlan-test.workers.dev |
-| `ph-charts` | `npx wrangler deploy -c deploy/charts.jsonc` | https://ph-charts.kinlan-test.workers.dev |
+| `handlers` | `npx wrangler deploy` | https://beyondthetab.dev |
+| `ph-notes` | `npx wrangler deploy -c deploy/notes.jsonc` | https://notes.beyondthetab.dev |
+| `ph-tasks` | `npx wrangler deploy -c deploy/tasks.jsonc` | https://tasks.beyondthetab.dev |
+| `ph-reader` | `npx wrangler deploy -c deploy/reader.jsonc` | https://reader.beyondthetab.dev |
+| `ph-charts` | `npx wrangler deploy -c deploy/charts.jsonc` | https://charts.beyondthetab.dev |
 
 A new app's Worker needs its own trigger: in the Cloudflare dashboard open the
 Worker, then Settings, Build, connect `PaulKinlan/handlers`, branch `main`, and

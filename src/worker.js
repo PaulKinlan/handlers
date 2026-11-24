@@ -34,13 +34,21 @@ export function label(host) { return host.split(":")[0].split(".")[0]; }
 export function siteFor(host) { return LABELS[label(host)] || "main"; }
 
 // Where each site lives. Locally the names follow the host that was asked
-// (hub.localhost:8787, notes.localhost:8787). Deployed, each site is its
-// Worker's workers.dev address, unless the hub has a domain (MAIN_HOST).
+// (hub.localhost:8787, notes.localhost:8787). Deployed with MAIN_HOST and no
+// DEMO_SUFFIX, the hub lives at MAIN_HOST and each demo app on its own
+// subdomain (notes.beyondthetab.dev, tasks.beyondthetab.dev, ...). With
+// DEMO_SUFFIX set, each app falls back to its workers.dev address.
 export function siteOrigins(url, env) {
   const host = url.host;
   const first = host.split(".")[0];
   const local = host.includes("localhost") || host.startsWith("127.");
   const out = {};
+  if (!local && env.MAIN_HOST && !env.DEMO_SUFFIX) {
+    for (const site of Object.keys(LOCAL)) {
+      out[site] = site === "main" ? "https://" + env.MAIN_HOST : "https://" + site + "." + env.MAIN_HOST;
+    }
+    return out;
+  }
   if (!local && env.DEMO_SUFFIX) {
     for (const [site, name] of Object.entries(PROD)) {
       out[site] = site === "main" && env.MAIN_HOST ? "https://" + env.MAIN_HOST : "https://" + name + env.DEMO_SUFFIX;

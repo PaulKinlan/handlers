@@ -31,6 +31,13 @@ test("each site knows where the others are, locally and deployed", () => {
   assert.equal(siteOrigins(new URL("https://ph-reader.kinlan-test.workers.dev/"), env).charts, "https://ph-charts.kinlan-test.workers.dev");
   assert.equal(siteOrigins(new URL("https://ph-notes.kinlan-test.workers.dev/"), env).tasks, "https://ph-tasks.kinlan-test.workers.dev");
   assert.equal(siteOrigins(new URL("https://ph-notes.kinlan-test.workers.dev/"), { ...env, MAIN_HOST: "beyondthetab.dev" }).main, "https://beyondthetab.dev");
+  assert.deepEqual(siteOrigins(new URL("https://beyondthetab.dev/"), { ...env, MAIN_HOST: "beyondthetab.dev", DEMO_SUFFIX: "" }), {
+    main: "https://beyondthetab.dev",
+    notes: "https://notes.beyondthetab.dev",
+    tasks: "https://tasks.beyondthetab.dev",
+    reader: "https://reader.beyondthetab.dev",
+    charts: "https://charts.beyondthetab.dev",
+  });
 });
 
 test("each app serves its own manifest, with the handlers it registers", async () => {
@@ -155,5 +162,12 @@ test("scope_extensions, related_applications and web-app-origin-association matc
   assert.deepEqual(prodManifest.related_applications, [{ platform: "webapp", url: "https://ph-notes.kinlan-test.workers.dev/manifest.webmanifest" }]);
   const prodAssoc = await (await get("https://handlers.kinlan-test.workers.dev/.well-known/web-app-origin-association")).json();
   assert.deepEqual(prodAssoc["https://ph-notes.kinlan-test.workers.dev/"], { scope: "/patterns/scope-extensions/" });
+
+  const domainEnv = { ...env, MAIN_HOST: "beyondthetab.dev", DEMO_SUFFIX: "" };
+  const domainManifest = await (await worker.fetch(new Request("https://notes.beyondthetab.dev/manifest.webmanifest"), domainEnv)).json();
+  assert.deepEqual(domainManifest.scope_extensions, [{ type: "origin", origin: "https://beyondthetab.dev" }]);
+  assert.deepEqual(domainManifest.related_applications, [{ platform: "webapp", url: "https://notes.beyondthetab.dev/manifest.webmanifest" }]);
+  const domainAssoc = await (await worker.fetch(new Request("https://beyondthetab.dev/.well-known/web-app-origin-association"), domainEnv)).json();
+  assert.deepEqual(domainAssoc["https://notes.beyondthetab.dev/"], { scope: "/patterns/scope-extensions/" });
 });
 
