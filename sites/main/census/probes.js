@@ -203,8 +203,8 @@ export const PROBES = {
       return {
         gap: true,
         text: agreed
-          ? `This origin publishes /.well-known/web-app-origin-association agreeing with ${otherHost}, and Notes lists this origin in scope_extensions — yet no script API tells a page whether the browser accepted the association or whether a link will open in the app or a tab.`
-          : `/.well-known/web-app-origin-association is present, and no script API reports whether a link into another origin will open in an app or a tab.`,
+          ? `This origin publishes /.well-known/web-app-origin-association and agrees with ${otherHost}, and Notes lists this origin under scope_extensions. No script API says whether the browser accepted that, or whether a link will open in the app or in a tab.`
+          : `/.well-known/web-app-origin-association is here. No script API says whether a link into another origin will open in an app or in a tab.`,
       };
     } catch (err) {
       return { gap: null, text: `Could not fetch /.well-known/web-app-origin-association: ${err.message}.` };

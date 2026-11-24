@@ -8,8 +8,8 @@ export function run(el, sites) {
     ["Reader", sites.reader],
     ["Charts", sites.charts],
   ];
-  el.insertAdjacentHTML("beforeend", `<h3>Try cross-origin navigator.install()</h3>
-    <p class="small">Each button asks the browser to install a demo app from its own origin. Requires the Web Install API (<code>navigator.install</code>) in Chromium.</p>
+  el.insertAdjacentHTML("beforeend", `<h3>Install a demo app from here</h3>
+    <p class="small">Each button asks the browser to install a demo app that lives on another origin. It needs <code>navigator.install</code>, which only Chromium has.</p>
     <div class="row" style="margin-top:.6rem">${apps.map(([name, origin]) => `<button type="button" class="quiet" data-install="${origin}">Install ${name}</button>`).join("")}</div>
     <p id="install-result" class="small muted" style="margin-top:.6rem" aria-live="polite"></p>`);
 
@@ -18,7 +18,7 @@ export function run(el, sites) {
     btn.addEventListener("click", async () => {
       const origin = btn.dataset.install;
       if (typeof navigator.install !== "function") {
-        out.textContent = `navigator.install() is not available in this browser. Open ${origin} and use the browser's install control instead.`;
+        out.textContent = `This browser has no navigator.install(). Open ${origin} and use the browser's own install button.`;
         return;
       }
       out.textContent = `Asking the browser to install ${origin}…`;

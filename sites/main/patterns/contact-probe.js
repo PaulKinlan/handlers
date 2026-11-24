@@ -2,8 +2,8 @@
 // and show what came back (demonstrating a brokered OS picker with a reply).
 
 export function run(el) {
-  el.insertAdjacentHTML("beforeend", `<h3>Try the OS contact picker</h3>
-    <p class="small">On Android Chrome, this opens the operating system's contact picker and returns only the fields you approve. Desktop browsers generally do not expose it.</p>
+  el.insertAdjacentHTML("beforeend", `<h3>Try the contact picker</h3>
+    <p class="small">In Chrome on Android this opens the system contact picker, and the page gets only what you choose. Desktop browsers do not have it.</p>
     <div class="row" style="margin-top:.6rem">
       <button type="button" id="cp-pick">Pick a contact</button>
     </div>
@@ -19,8 +19,8 @@ export function run(el) {
       const props = (await navigator.contacts.getProperties?.()) || ["name", "email"];
       const picked = await navigator.contacts.select(props.filter((p) => ["name", "email", "tel"].includes(p)), { multiple: true });
       out.textContent = picked.length
-        ? `Returned ${picked.length} contact(s) with properties: ${Object.keys(picked[0]).join(", ")}.`
-        : "Picker closed with no contacts selected.";
+        ? `Got ${picked.length} contact(s), with ${Object.keys(picked[0]).join(", ")}.`
+        : "The picker closed with nothing chosen.";
     } catch (err) {
       out.textContent = `Contact picker failed: ${err.name} (${err.message})`;
     }

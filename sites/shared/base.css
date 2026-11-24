@@ -89,7 +89,7 @@ pre .c { color: #919a94; }
 .muted { color: var(--muted); }
 .small { font-size: var(--step--1); }
 
-/* Tactile architectural buttons */
+/* Buttons */
 button, .button {
   font: 600 var(--step--1)/1.1 var(--body);
   display: inline-flex;
@@ -153,7 +153,7 @@ input[type="text"]:focus-visible, input[type="search"]:focus-visible, textarea:f
 }
 label { font-weight: 600; display: block; margin-bottom: 0.3rem; font-size: var(--step--1); }
 
-/* Elevated archival panels */
+/* Panels */
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);

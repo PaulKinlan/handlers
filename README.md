@@ -11,12 +11,12 @@ operating system make on an app's behalf.
 
 | Path | What it is |
 | --- | --- |
-| `sites/main/` | The hub: split hero + multi-origin demo launcher, prominent Agent Skill banner, interactive pattern explorer (`explorer.js`), and one page per pattern |
-| `sites/main/SKILL.md`, `sites/main/skill/` | Agent Skill (`https://beyondthetab.dev/SKILL.md`) and `/skill/` page for pasting into a coding agent to audit any existing web app's codebase, docs, and plans for OS integration opportunities |
+| `sites/main/` | The hub: the home page with the demo apps and the agent skill, the list of patterns with filters (`explorer.js`), and one page per pattern |
+| `sites/main/SKILL.md`, `sites/main/skill/` | The agent skill, served at `https://beyondthetab.dev/SKILL.md`, and the `/skill/` page about it. A developer gives it to a coding agent, which checks their codebase, docs and plans against the patterns here and reports which integrations fit |
 | `sites/main/patterns/all.js` | Every pattern as data (27 total across 5 groups): state (`live` or `planned`), how it works, what to build, what goes wrong, sources, Paul's related posts, related Port Authority pages |
-| `sites/main/patterns/diagrams.js` | Inline, theme-aware SVG sequence diagrams for every pattern, showing actors, origin boundaries, handoffs, and platform gaps |
-| `sites/main/patterns/_page.html` | Draws `/patterns/<id>/` for every pattern: the workflow diagram, the live demo & browser checks, then how it works, what you could build, and what goes wrong |
-| `sites/main/patterns/demos.js` | The live part of each pattern page: multi-origin walkthroughs, browser feature checks, and interactive probes (`handoff-probe.js`, `scheme-probe.js`, `scope-probe.js`, `install-probe.js`, `screens-probe.js`, `contact-probe.js`, `intents-probe.js`, `related-apps-probe.js`, `credentials-probe.js`, `migration-probe.js`) |
+| `sites/main/patterns/diagrams.js` | A sequence diagram for each pattern, drawn as inline SVG: who sends what to whom, and where the platform stops |
+| `sites/main/patterns/_page.html` | Draws `/patterns/<id>/` for every pattern: the diagram, the live demo and the checks for this browser, then how it works, what you could build, what goes wrong |
+| `sites/main/patterns/demos.js` | The live part of each pattern page: steps that use the demo apps, the feature checks for this browser, and the checks a page runs itself (`handoff-probe.js`, `scheme-probe.js`, `scope-probe.js`, `install-probe.js`, `screens-probe.js`, `contact-probe.js`, `intents-probe.js`, `related-apps-probe.js`, `credentials-probe.js`, `migration-probe.js`) |
 | `sites/main/census/` | The integration census: 24 checks of how a web app can be opened (link schemes, manifest handlers, launch handling, sharing, install, badging, service worker messages, origin association), run in the reader's browser by `probes.js`, and a table of use cases marked works, partly or blocked. The page is itself installable: `manifest.json` declares `protocol_handlers` (`web+census:`), `file_handlers` (`.txt`, `.census`), POST `share_target` (answered by `sw.js`) and `launch_handler`, and `launches.js` lists what each route delivered. `test/census.mjs` is a Playwright check of both pages |
 | `sites/main/missing/` | What web app integration is missing: eight gaps, each with the evidence, what it would enable, what to do today, and a live check from `census/probes.js` |
 | `sites/main/samples/` | `.webnote`, `.webtasks`, and `.csv` files to open with the installed apps |

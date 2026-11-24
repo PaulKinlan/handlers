@@ -3,11 +3,11 @@
 // /.well-known/web-app-origin-association file.
 
 export async function run(el, sites) {
-  el.insertAdjacentHTML("beforeend", `<h3>Live handshake check</h3>
-    <p class="small">Fetching both sides of the agreement now: Notes' manifest and this origin's <code>/.well-known/web-app-origin-association</code>.</p>
+  el.insertAdjacentHTML("beforeend", `<h3>Do both sides agree?</h3>
+    <p class="small">Fetched just now: the Notes manifest, and this origin's <code>/.well-known/web-app-origin-association</code>.</p>
     <ul class="checks" id="scope-probe">
       <li><span class="jack"></span>Notes manifest <code>scope_extensions</code>: <span data-r="manifest">checking…</span></li>
-      <li><span class="jack"></span>Hub <code>/.well-known/web-app-origin-association</code>: <span data-r="waoa">checking…</span></li>
+      <li><span class="jack"></span>This origin's <code>/.well-known/web-app-origin-association</code>: <span data-r="waoa">checking…</span></li>
     </ul>`);
 
   const list = el.querySelector("#scope-probe");

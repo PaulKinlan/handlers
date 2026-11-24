@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Beyond the Tab — OS &amp; Cross-App Integration Lab for Web Apps</title>
-  <meta name="description" content="Interactive experiments and visual workflow diagrams for protocol handlers, file handlers, launch handling, share targets, Document PiP, and the rest of the OS integration surface for installed web apps.">
+  <title>Beyond the Tab: how web apps hook into the OS and each other</title>
+  <meta name="description" content="Experiments with protocol handlers, file handlers, launch handling, share targets, window controls, and the other ways an installed web app connects to the operating system and to other apps.">
   <meta name="theme-color" content="#171a18">
   <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/patterns/patterns.css">
@@ -73,7 +73,7 @@
       <a class="wordmark" href="/">Beyond the Tab</a>
       <nav>
         <a href="/patterns/">Patterns</a>
-        <a href="/skill/">Agent Skill</a>
+        <a href="/skill/">Agent skill</a>
         <a href="/census/">Browser census</a>
         <a href="/missing/">What is missing</a>
       </nav>
@@ -81,21 +81,20 @@
 
     <section class="hero-grid">
       <div class="hero-copy">
-        <span class="hero-eyebrow">Web App × OS Integration Field Manual</span>
-        <h1>How installed web apps hook into the OS</h1>
-        <p class="hero-lead">Protocol schemes, file handlers, launch queues, share targets, window chrome, Document PiP, and cross-origin handoffs — each explained with a workflow diagram and a live multi-origin demo.</p>
-        <p class="muted">Every manifest registration belongs to an origin, so this lab runs four independent demo apps on separate origins alongside a live browser census and platform gap audit.</p>
+        <h1>Beyond the Tab</h1>
+        <p class="hero-lead">How far can an installed web app hook into the operating system, and into other web apps?</p>
+        <p class="muted">Links with custom schemes, files opened from the desktop, the share sheet, launch handling, badges, window chrome, Document PiP, and cross-origin handoffs. Each pattern has a diagram, a live demo where one exists, how it works, what you could build with it, and what goes wrong. The four demo apps run on separate origins, because each registration belongs to an origin.</p>
         <div class="hero-actions">
-          <a class="button accent" href="/skill/">Get Agent SKILL.md</a>
-          <a class="button quiet" href="#explorer">Browse patterns</a>
+          <a class="button accent" href="/skill/">Use the agent skill</a>
+          <a class="button quiet" href="#explorer">All patterns</a>
           <a class="button quiet" href="/census/">Browser census</a>
         </div>
       </div>
 
-      <aside class="panel ruled sandbox" aria-label="Multi-origin demo apps">
+      <aside class="panel ruled sandbox" aria-label="Demo apps on separate origins">
         <div class="sandbox-head">
           <h2>Demo apps</h2>
-          <span class="small muted">Separate origins</span>
+          <span class="small muted">One origin each</span>
         </div>
         <ul class="app-list">
           <li class="app-row">
@@ -108,27 +107,27 @@
           <li class="app-row">
             <div>
               <strong>Tasks</strong>
-              <small><code>web+task:</code>, <code>.webtasks</code>, GET share, badge, WCO title bar, Document PiP</small>
+              <small><code>web+task:</code>, <code>.webtasks</code>, GET share, badge, title bar overlay, Document PiP</small>
             </div>
             <a class="button quiet" id="tasks" href="#">Open</a>
           </li>
           <li class="app-row">
             <div>
               <strong>Reader</strong>
-              <small>Opens <code>.csv</code>/<code>.txt</code>/<code>.md</code> from OS and lends a revocable port to Charts</small>
+              <small>Opens <code>.csv</code>, <code>.txt</code> and <code>.md</code> from the OS and lends a port to Charts</small>
             </div>
             <a class="button quiet" id="reader" href="#">Open</a>
           </li>
           <li class="app-row">
             <div>
               <strong>Charts</strong>
-              <small>Renders &amp; edits Reader's file across origins without ever holding the handle</small>
+              <small>Draws and edits Reader's file across origins without holding the file handle</small>
             </div>
             <a class="button quiet" id="charts" href="#">Open</a>
           </li>
         </ul>
         <div class="quick-try">
-          <span class="muted">Quick links &amp; sample files (once installed or registered):</span>
+          <span class="muted">Try a link or sample file once an app is installed or registered:</span>
           <div class="quick-try-links">
             <a href="web+note:A%20note%20from%20the%20hub">web+note:</a>
             <a href="web+task:A%20task%20from%20the%20hub">web+task:</a>
@@ -140,27 +139,26 @@
       </aside>
     </section>
 
-    <section class="panel ruled skill-banner" aria-label="Agent integration audit skill">
+    <section class="panel ruled skill-banner" aria-label="Agent skill">
       <div class="skill-banner-copy">
-        <span class="hero-eyebrow">Agent Skill · /SKILL.md</span>
-        <h2>Audit your own web app with your coding agent</h2>
-        <p class="small muted">Give your agent our <code>SKILL.md</code> to inspect your codebase, manifest, service worker, docs, and plans—evaluating every OS integration pattern here (plus optional ChromeOS checks) and returning a prioritized report of what makes sense for your app and what to skip.</p>
+        <h2>Check your own site with an agent</h2>
+        <p class="small muted">Point a coding agent at <code>/SKILL.md</code> to check your repo, manifest, service worker, docs, and plans against the patterns on this site. It lists which OS integrations fit your app, which ones do not, and what to try next.</p>
       </div>
       <div class="skill-banner-actions">
         <div class="skill-banner-buttons">
           <button type="button" id="home-copy-skill" class="accent">Copy SKILL.md</button>
-          <button type="button" id="home-copy-prompt" class="quiet">Copy agent prompt</button>
-          <a class="button quiet" href="/skill/">Read &amp; install</a>
+          <button type="button" id="home-copy-prompt" class="quiet">Copy prompt</button>
+          <a class="button quiet" href="/skill/">How to use it</a>
           <a class="button quiet" href="/SKILL.md">Raw file</a>
         </div>
-        <span id="home-skill-status" class="small muted" aria-live="polite">Works with Claude Code, Cursor, Gemini CLI, Codex &amp; Antigravity.</span>
+        <span id="home-skill-status" class="small muted" aria-live="polite">Works with Claude Code, Cursor, Gemini CLI, Codex, and Antigravity.</span>
       </div>
     </section>
 
     <main id="explorer" aria-label="Pattern catalog"></main>
 
     <footer class="small muted">
-      Beyond the Tab (<code>beyondthetab.dev</code>) — by <a href="https://paul.kinlan.me">Paul Kinlan</a>. Inspired by <a href="https://port-authority.dev">Port Authority</a>, which explores MessagePorts between sites.
+      Beyond the Tab (<code>beyondthetab.dev</code>). By <a href="https://paul.kinlan.me">Paul Kinlan</a>. Inspired by <a href="https://port-authority.dev">Port Authority</a>, which covers <code>MessagePort</code>s between sites.
     </footer>
   </div>
   <script type="module">
@@ -173,22 +171,22 @@
     mountExplorer(document.getElementById("explorer"));
 
     const skillStatus = document.getElementById("home-skill-status");
-    const agentPrompt = `Read ${location.origin}/SKILL.md and audit this codebase, its docs, and its plans for OS and cross-app web integration opportunities. Ask me if platform scope (including ChromeOS) is unclear, then return a prioritized report of recommended next steps and what to skip.`;
+    const agentPrompt = `Read ${location.origin}/SKILL.md and check this codebase, its docs, and its plans for OS and cross-app integration opportunities. Ask me if target platforms (including ChromeOS) are unclear, then write a report of suggested next steps and what to skip.`;
     document.getElementById("home-copy-skill").addEventListener("click", async () => {
       try {
         const md = await (await fetch("/SKILL.md")).text();
         await navigator.clipboard.writeText(md);
-        skillStatus.textContent = "Copied SKILL.md to your clipboard.";
+        skillStatus.textContent = "Copied SKILL.md to the clipboard.";
       } catch (err) {
-        skillStatus.textContent = "Could not copy automatically — open /SKILL.md to copy.";
+        skillStatus.textContent = "Could not copy automatically. Open /SKILL.md to copy it.";
       }
     });
     document.getElementById("home-copy-prompt").addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(agentPrompt);
-        skillStatus.textContent = "Copied the one-line agent prompt to your clipboard.";
+        skillStatus.textContent = "Copied the prompt to the clipboard.";
       } catch (err) {
-        skillStatus.textContent = "Could not copy automatically — open /skill/ to copy.";
+        skillStatus.textContent = "Could not copy automatically. Open /skill/ to copy it.";
       }
     });
   </script>

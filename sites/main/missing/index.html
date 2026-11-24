@@ -14,7 +14,7 @@
   <div class="wrap">
     <header class="site-bar">
       <a class="wordmark" href="/">Beyond the Tab</a>
-      <nav><a href="/patterns/">Patterns</a><a href="/skill/">Agent Skill</a><a href="/census/">Browser census</a><a href="/missing/" aria-current="page">What is missing</a></nav>
+      <nav><a href="/patterns/">Patterns</a><a href="/skill/">Agent skill</a><a href="/census/">Browser census</a><a href="/missing/" aria-current="page">What is missing</a></nav>
     </header>
     <div class="stack" style="padding-block:2.5rem 1.5rem; --gap:1.1rem">
       <h1 style="font-size:var(--step-3)">What web app integration is missing</h1>
@@ -173,7 +173,7 @@
         <div class="item">
           <h3>An app's scope is one origin, and its links cannot be checked</h3>
           <h4>What is missing</h4>
-          <p>An installed app covers addresses under its <code>scope</code> on one origin. <code>scope_extensions</code> lets it take in other origins that agree to it via <code>/.well-known/web-app-origin-association</code>, so that ordinary <code>https:</code> links open the app. Even when both origins publish the agreement (as <a href="/patterns/scope-extensions/">the Notes app and this Hub now do</a>), a page cannot check whether the browser accepted it or whether a given link will open in an app or a tab.</p>
+          <p>An installed app covers addresses under its <code>scope</code> on one origin. <code>scope_extensions</code> lets it take in other origins that agree to it, so that ordinary <code>https:</code> links open the app. Notes and this site <a href="/patterns/scope-extensions/">publish that agreement</a>. A page still cannot check whether the browser accepted it, or whether a given link will open in an app or a tab.</p>
           <div class="now"><b>In your browser, now</b><span data-probe="scope-assoc"></span></div>
           <h4>How I know</h4>
           <ul><li>The <a href="https://github.com/WICG/manifest-incubations/blob/gh-pages/scope_extensions-explainer.md">scope_extensions explainer</a>, and my older post on <a href="https://paul.kinlan.me/deep-web-app-linking/">deep web app linking</a>.</li></ul>
@@ -195,7 +195,7 @@
         <p>If something here is wrong, already fixed, or already proposed somewhere I did not find, please <a href="https://github.com/PaulKinlan/handlers/issues">open an issue</a>.</p>
       </section>
     </main>
-    <footer class="small muted" style="padding-block:2rem 4rem">Beyond the Tab (<code>beyondthetab.dev</code>) — by <a href="https://paul.kinlan.me">Paul Kinlan</a>.</footer>
+    <footer class="small muted" style="padding-block:2rem 4rem">Beyond the Tab (<code>beyondthetab.dev</code>). By <a href="https://paul.kinlan.me">Paul Kinlan</a>.</footer>
   </div>
   <script type="module">
     import { runAll, show, tally } from "/census/probes.js";

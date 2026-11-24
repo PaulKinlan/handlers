@@ -21,7 +21,7 @@ const VERBS = [
     verb: "Edit file across origins",
     api: "File handle + Hawser MessagePort",
     pattern: "os-file-handoff",
-    reply: { ok: true, label: "Manual port" },
+    reply: { ok: true, label: "Only over a port you set up" },
     check: () => typeof MessageChannel === "function" && typeof window.showOpenFilePicker === "function",
   },
   {
@@ -42,7 +42,7 @@ const VERBS = [
     verb: "Copy / paste structured data",
     api: 'ClipboardItem ("web " custom format)',
     pattern: "clipboard",
-    reply: { ok: false, label: "Clipboard only" },
+    reply: { ok: false, label: "No" },
     check: () => typeof ClipboardItem === "function" && typeof ClipboardItem.supports === "function" && ClipboardItem.supports("web application/x-webtasks+json"),
   },
   {
@@ -76,19 +76,19 @@ export function run(el) {
       <td><strong>${v.verb}</strong></td>
       <td><a href="/patterns/${v.pattern}/"><code>${v.api}</code></a></td>
       <td><span class="jack${v.reply.ok ? " on" : ""}"></span>${v.reply.label}</td>
-      <td><span class="jack${here ? " on" : ""}"></span>${here ? "Available" : "Not here"}</td>
+      <td><span class="jack${here ? " on" : ""}"></span>${here ? "Yes" : "No"}</td>
     </tr>`;
   }).join("");
 
-  el.insertAdjacentHTML("beforeend", `<h3>Web Intents verbs mapped to today's APIs</h3>
-    <p class="small muted">Checked live in your browser. Notice how almost every OS-launched route (links, files, shares) is one-way; only narrow brokered pickers return an answer.</p>
+  el.insertAdjacentHTML("beforeend", `<h3>The Web Intents verbs, and what covers each today</h3>
+    <p class="small muted">Checked in your browser when the page loaded. The routes the operating system starts (links, files, shares) have no reply. The pickers the browser brokers do.</p>
     <div style="overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--surface);padding:.25rem .75rem">
       <table style="border-collapse:collapse;width:100%;min-width:34rem;font-size:var(--step--1)">
         <thead>
           <tr style="text-align:left;font-family:var(--mono);font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)">
             <th style="padding:.6rem .6rem .6rem 0">Verb</th>
-            <th style="padding:.6rem">Platform API</th>
-            <th style="padding:.6rem">Returns reply?</th>
+            <th style="padding:.6rem">API</th>
+            <th style="padding:.6rem">A reply to the caller?</th>
             <th style="padding:.6rem 0 .6rem .6rem">In this browser</th>
           </tr>
         </thead>

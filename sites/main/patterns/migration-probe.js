@@ -4,19 +4,19 @@
 
 export async function run(el, sites) {
   const current = sites.notes;
-  el.insertAdjacentHTML("beforeend", `<h3>Generate a migration handshake</h3>
-    <p class="small muted">Enter a target domain to see the exact <code>migrate_from</code> and <code>/.well-known/web-app-origin-association</code> pair for moving Notes off <code>${current}</code>.</p>
+  el.insertAdjacentHTML("beforeend", `<h3>What each side would publish</h3>
+    <p class="small muted">Type the origin Notes would move to. It is on <code>${current}</code> now.</p>
     <div class="row" style="margin-top:.5rem">
       <label for="mig-host" style="margin:0">New origin</label>
       <input type="text" id="mig-host" value="https://notes.beyondthetab.dev" style="max-width:18rem">
     </div>
     <div style="display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));margin-top:.6rem">
       <div>
-        <p class="small" style="margin-bottom:.35rem"><strong>1. New origin's manifest</strong></p>
+        <p class="small" style="margin-bottom:.35rem"><strong>1. In the manifest on the new origin</strong></p>
         <pre id="mig-manifest" class="small"></pre>
       </div>
       <div>
-        <p class="small" style="margin-bottom:.35rem"><strong>2. Old origin's <code>/.well-known/web-app-origin-association</code></strong></p>
+        <p class="small" style="margin-bottom:.35rem"><strong>2. On the old origin, at <code>/.well-known/web-app-origin-association</code></strong></p>
         <pre id="mig-waoa" class="small"></pre>
       </div>
     </div>`);

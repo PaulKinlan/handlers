@@ -15,7 +15,7 @@ export function mountExplorer(container) {
           <button type="button" class="pill" data-group="all" aria-pressed="true">All (${all.length})</button>
           ${groups.map((g) => `<button type="button" class="pill" data-group="${g.id}" aria-pressed="false">${g.title}</button>`).join("")}
         </div>
-        <input type="search" class="filter-search" id="pattern-search" placeholder="Search APIs, manifest keys, patterns…" aria-label="Search patterns">
+        <input type="search" class="filter-search" id="pattern-search" placeholder="Search patterns, APIs, manifest keys" aria-label="Search patterns">
       </div>
       <div class="filter-row small">
         <div class="filter-pills" data-role="states">
@@ -53,10 +53,9 @@ export function mountExplorer(container) {
         <p class="muted">${g.blurb}</p>
         <ul class="cards">${items.map((p) => `<li><a href="/patterns/${p.id}/">
           <strong>${p.title}</strong>
-          <span>${plain(p.blurb).split(". ")[0]}.</span>
+          <span>${plain(p.blurb).split(". ")[0].replace(/\.$/, "")}.</span>
           <div class="card-meta">
             <span class="${p.state}">${p.state === "live" ? "Live demo" : "Planned"}</span>
-            <span>Diagram →</span>
           </div>
         </a></li>`).join("")}</ul>
       </section>`;
@@ -64,7 +63,7 @@ export function mountExplorer(container) {
 
     groupsEl.innerHTML = sections.length
       ? sections.join("")
-      : `<div class="panel" style="margin-top:1rem"><p class="muted">No patterns match that filter. Clear the search or switch back to All.</p></div>`;
+      : `<div class="panel" style="margin-top:1rem"><p class="muted">Nothing matches. Clear the search, or go back to All.</p></div>`;
     tallyEl.textContent = `Showing ${shown} of ${all.length} patterns`;
   }
 

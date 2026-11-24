@@ -9,21 +9,21 @@ export function run(el) {
 
   const rows = PROTOCOLS.map((proto) => {
     let ok = false;
-    let note = "DigitalCredential API absent";
+    let note = "there is no DigitalCredential here";
     if (canQuery) {
       try {
         ok = !!window.DigitalCredential.userAgentAllowsProtocol(proto);
-        note = ok ? "allowed by this browser" : "not advertised by this browser";
+        note = ok ? "allowed" : "not allowed";
       } catch (err) {
         note = `threw ${err.name}`;
       }
     } else if (hasApi) {
-      note = "DigitalCredential exists, but userAgentAllowsProtocol() is not exposed";
+      note = "DigitalCredential is here, but userAgentAllowsProtocol() is not";
     }
-    return `<li><span class="jack${ok ? " on" : ""}"></span><code>${proto}</code> — ${note}</li>`;
+    return `<li><span class="jack${ok ? " on" : ""}"></span><code>${proto}</code>: ${note}</li>`;
   }).join("");
 
-  el.insertAdjacentHTML("beforeend", `<h3>Supported credential protocols in this browser</h3>
-    <p class="small muted">Uses <code>DigitalCredential.userAgentAllowsProtocol()</code> without opening a wallet prompt.</p>
+  el.insertAdjacentHTML("beforeend", `<h3>Credential protocols this browser allows</h3>
+    <p class="small muted">Asked with <code>DigitalCredential.userAgentAllowsProtocol()</code>. No wallet opens.</p>
     <ul class="checks">${rows}</ul>`);
 }

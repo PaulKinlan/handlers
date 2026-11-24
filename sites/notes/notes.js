@@ -131,14 +131,14 @@ panel.addEventListener("drop", async (e) => {
     if (dropped?.kind === "file") {
       const file = await dropped.getFile();
       show(await file.text(), file.name, dropped);
-      arrive("drop (handle)", `${file.name}, ${file.size} bytes — writable handle`);
+      arrive("drop (handle)", `${file.name}, ${file.size} bytes, with a handle`);
     } else if (dropped?.kind === "directory") {
       $("save-state").textContent = `Dropped folder "${dropped.name}". Drop a single note file to edit it.`;
       arrive("drop (directory)", dropped.name);
     } else if (fallbackFile) {
       show(await fallbackFile.text(), fallbackFile.name, null);
-      $("save-state").textContent = "Opened as a read-only copy (this browser did not give a file handle).";
-      arrive("drop (copy)", `${fallbackFile.name}, ${fallbackFile.size} bytes — no handle`);
+      $("save-state").textContent = "Opened a copy. This browser did not give a handle, so Save downloads the note.";
+      arrive("drop (copy)", `${fallbackFile.name}, ${fallbackFile.size} bytes, a copy with no handle`);
     }
   } catch (err) {
     $("save-state").textContent = "Could not open dropped file: " + err.message;
@@ -157,7 +157,7 @@ $("paste-structured").onclick = async () => {
         const parsed = decodeTasks(raw);
         if (parsed) {
           show(parsed.markdown, "Tasks from clipboard");
-          $("save-state").textContent = `Pasted ${parsed.tasks.length} task(s) via custom format ${TASKS_MIME}.`;
+          $("save-state").textContent = `Pasted ${parsed.tasks.length} task(s) from the custom format ${TASKS_MIME}.`;
           arrive("clipboard (custom)", `${parsed.tasks.length} task(s) (${parsed.open} open, ${parsed.done} done) from ${parsed.app}`);
           return;
         }
@@ -167,7 +167,7 @@ $("paste-structured").onclick = async () => {
       if (item.types.includes("text/plain")) {
         const text = await (await item.getType("text/plain")).text();
         show(text, "Plain text from clipboard");
-        $("save-state").textContent = "No custom task format on the clipboard; pasted text/plain instead.";
+        $("save-state").textContent = "The clipboard had no task format, so this is the text/plain version.";
         arrive("clipboard (plain)", `${text.length} characters`);
         return;
       }

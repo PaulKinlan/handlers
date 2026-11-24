@@ -124,7 +124,7 @@ $("copy-tasks").onclick = async () => {
     await navigator.clipboard.write([new ClipboardItem(payload)]);
     $("state").textContent = custom
       ? `Copied ${count} task(s) with ${TASKS_MIME} and text/plain. Paste into Notes.`
-      : `Copied ${count} task(s) as text/plain (this browser does not support web custom clipboard formats).`;
+      : `Copied ${count} task(s) as text/plain. This browser has no web custom formats.`;
   } catch (err) {
     $("state").textContent = "Not copied: " + err.message;
   }
@@ -154,9 +154,9 @@ $("pip").onclick = async () => {
     $("pip").textContent = "Dock back";
     const placeholder = document.createElement("div");
     placeholder.className = "panel muted small";
-    placeholder.textContent = "Tasks is popped out in an always-on-top floating window. Close it or press Dock back to bring it home.";
+    placeholder.textContent = "The task list is in its own window. Close that window, or press Dock back, to put it here again.";
     slot.append(placeholder);
-    arrive("documentPictureInPicture", "popped out into floating window");
+    arrive("documentPictureInPicture", "moved the list into its own window");
     pipWin.addEventListener("pagehide", () => {
       placeholder.remove();
       slot.append(panel);
