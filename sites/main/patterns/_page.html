@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>An integration pattern | Handlers</title>
+  <title>An integration pattern | Beyond the Tab</title>
   <meta name="description" content="One way a web app hooks into the operating system or another app: a workflow diagram, a live demo, how it works, what to build with it and what goes wrong.">
   <meta name="theme-color" content="#171a18">
   <link rel="stylesheet" href="/base.css">
@@ -13,7 +13,7 @@
 <body>
   <div class="wrap">
     <header class="site-bar">
-      <a class="wordmark" href="/">Handlers</a>
+      <a class="wordmark" href="/">Beyond the Tab</a>
       <nav>
         <a href="/patterns/" aria-current="true">Patterns</a>
         <a href="/census/">Browser census</a>
@@ -60,7 +60,7 @@
       $("blurb").innerHTML = `<a href="/patterns/">See all the patterns.</a>`;
     } else {
       const p = all[index];
-      document.title = `${plain(p.title)} | Handlers`;
+      document.title = `${plain(p.title)} | Beyond the Tab`;
       document.querySelector('meta[name="description"]').content = plain(p.blurb).slice(0, 180);
       $("group").innerHTML = `<a href="/patterns/#${p.group}">${groups.find((g) => g.id === p.group).title}</a>`;
       $("state").textContent = p.state === "live" ? "Live demo" : "Planned";

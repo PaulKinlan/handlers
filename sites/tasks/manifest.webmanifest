@@ -1,5 +1,5 @@
 {
-  "name": "Handlers Tasks",
+  "name": "Beyond the Tab Tasks",
   "short_name": "Tasks",
   "description": "A task list that opens web+task: links and .webtasks files, receives shares with GET, and badges its icon.",
   "id": "/",

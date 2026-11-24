@@ -1,6 +1,6 @@
 {
   "id": "/",
-  "name": "Handlers Charts",
+  "name": "Beyond the Tab Charts",
   "short_name": "Charts",
   "description": "Draws and edits a table that another app lends it over a port. It never holds the file.",
   "start_url": "/",

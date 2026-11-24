@@ -1,6 +1,6 @@
 {
-  // Handlers (working name). One Worker script, deployed under several names
-  // so that each demo app gets its own real origin. An app's manifest, its
+  // Beyond the Tab (beyondthetab.dev). One Worker script, deployed under several
+  // names so that each demo app gets its own real origin. An app's manifest, its
   // protocol handlers and its file handlers all belong to one origin, so the
   // apps cannot share one.
   //
@@ -19,7 +19,7 @@
     "html_handling": "none",
     "not_found_handling": "none"
   },
-  // MAIN_HOST is empty until the hub has a domain of its own. Until then every
-  // site lives at <worker name><DEMO_SUFFIX>.
-  "vars": { "MAIN_HOST": "", "DEMO_SUFFIX": ".kinlan-test.workers.dev" }
+  // The hub lives at MAIN_HOST; the demo apps live at <worker name><DEMO_SUFFIX>
+  // (or their own subdomains of beyondthetab.dev once attached).
+  "vars": { "MAIN_HOST": "beyondthetab.dev", "DEMO_SUFFIX": ".kinlan-test.workers.dev" }
 }

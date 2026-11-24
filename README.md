@@ -1,4 +1,4 @@
-# Handlers (working name)
+# Beyond the Tab (beyondthetab.dev)
 
 Experiments in how far an installed web app can hook into the operating system
 and into other web apps: custom URL schemes, file handling, launch handling,
@@ -72,7 +72,7 @@ Cloudflare token. Each Worker has one build trigger, "Deploy on push to main":
 
 | Worker | Deploy command | Address |
 | --- | --- | --- |
-| `handlers` | `npx wrangler deploy` | https://handlers.kinlan-test.workers.dev |
+| `handlers` | `npx wrangler deploy` | https://beyondthetab.dev (and https://handlers.kinlan-test.workers.dev) |
 | `ph-notes` | `npx wrangler deploy -c deploy/notes.jsonc` | https://ph-notes.kinlan-test.workers.dev |
 | `ph-tasks` | `npx wrangler deploy -c deploy/tasks.jsonc` | https://ph-tasks.kinlan-test.workers.dev |
 | `ph-reader` | `npx wrangler deploy -c deploy/reader.jsonc` | https://ph-reader.kinlan-test.workers.dev |

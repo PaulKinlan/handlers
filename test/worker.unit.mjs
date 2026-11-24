@@ -17,6 +17,8 @@ const env = {
 const get = (url, init) => worker.fetch(new Request(url, init), env);
 
 test("sites are chosen by the first label of the host", () => {
+  assert.equal(siteFor("beyondthetab.dev"), "main");
+  assert.equal(siteFor("notes.beyondthetab.dev"), "notes");
   assert.equal(siteFor("hub.localhost:8787"), "main");
   assert.equal(siteFor("notes.localhost:8787"), "notes");
   assert.equal(siteFor("ph-tasks.kinlan-test.workers.dev"), "tasks");
@@ -28,7 +30,7 @@ test("each site knows where the others are, locally and deployed", () => {
   assert.deepEqual(siteOrigins(new URL("http://notes.localhost:8787/"), env), { main: "http://hub.localhost:8787", notes: "http://notes.localhost:8787", tasks: "http://tasks.localhost:8787", reader: "http://reader.localhost:8787", charts: "http://charts.localhost:8787" });
   assert.equal(siteOrigins(new URL("https://ph-reader.kinlan-test.workers.dev/"), env).charts, "https://ph-charts.kinlan-test.workers.dev");
   assert.equal(siteOrigins(new URL("https://ph-notes.kinlan-test.workers.dev/"), env).tasks, "https://ph-tasks.kinlan-test.workers.dev");
-  assert.equal(siteOrigins(new URL("https://ph-notes.kinlan-test.workers.dev/"), { ...env, MAIN_HOST: "handlers.example" }).main, "https://handlers.example");
+  assert.equal(siteOrigins(new URL("https://ph-notes.kinlan-test.workers.dev/"), { ...env, MAIN_HOST: "beyondthetab.dev" }).main, "https://beyondthetab.dev");
 });
 
 test("each app serves its own manifest, with the handlers it registers", async () => {

@@ -50,7 +50,7 @@ export const demos = {
     checks: ["standalone"],
     steps: [
       `Install Notes on ChromeOS. Its manifest declares <code>note_taking.new_note_url</code> pointing at <code>/?new=1</code>. ${link(s.notes, "Open Notes")}`,
-      "Open ChromeOS Settings → Stylus (or the lock screen note-taking setting) and select Handlers Notes as the note-taking app.",
+      "Open ChromeOS Settings → Stylus (or the lock screen note-taking setting) and select Beyond the Tab Notes as the note-taking app.",
       "Trigger \"Create note\" from the stylus menu. Notes opens directly to a blank note and logs the launch.",
     ],
   }),
@@ -59,7 +59,7 @@ export const demos = {
     steps: [
       `Install Notes. ${link(s.notes, "Open Notes")}`,
       `Download a sample file. ${link("/samples/hello.webnote", "hello.webnote")} ${link("/samples/list.webtasks", "list.webtasks (for Tasks)")}`,
-      "Open the file from your file manager with Open with, Handlers Notes. The browser asks once whether Notes may open it.",
+      "Open the file from your file manager with Open with, Beyond the Tab Notes. The browser asks once whether Notes may open it.",
     ],
   }),
   "file-save-back": (s) => ({
@@ -180,7 +180,7 @@ export const demos = {
     checks: ["launchQueue", "launchParams", "picker", "standalone"],
     steps: [
       `Install Reader and Charts from desktop Chrome or Edge. Each is on its own origin. ${link(s.reader, "Open Reader")} ${link(s.charts, "Open Charts")}`,
-      `In your file manager, open a <code>.csv</code> file with Open with, Handlers Reader. No CSV to hand? Download one, or press "Use a sample file" in the Reader. ${link("/samples/plants.csv", "plants.csv")}`,
+      `In your file manager, open a <code>.csv</code> file with Open with, Beyond the Tab Reader. No CSV to hand? Download one, or press "Use a sample file" in the Reader. ${link("/samples/plants.csv", "plants.csv")}`,
       "In the Reader, press <strong>Open in Charts</strong>. Charts gets a port and draws the table.",
       "In Charts, change a number and press <strong>Save to the file</strong>. The Reader refuses. Tick \"Let the other app save to this file\" in the Reader and save again. The file on disk changes.",
       "Open a second <code>.csv</code> with the Reader. The window you already have receives it (<code>focus-existing</code>), and Charts shows it on the same port.",

@@ -1,6 +1,6 @@
 {
   "id": "/",
-  "name": "Handlers Reader",
+  "name": "Beyond the Tab Reader",
   "short_name": "Reader",
   "description": "Opens CSV, text and Markdown files from your file manager, and lends them to another app over a port.",
   "start_url": "/",

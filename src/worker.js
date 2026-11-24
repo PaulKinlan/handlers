@@ -1,4 +1,4 @@
-// Handlers worker.
+// Beyond the Tab worker.
 //
 // Serves a different folder of /sites depending on the hostname, so one script
 // can stand in for several unrelated origins: the hub, and the demo apps that
@@ -8,7 +8,7 @@
 // the browser, the operating system and the pages themselves.
 
 const LABELS = {
-  handlers: "main", hub: "main", localhost: "main",
+  beyondthetab: "main", handlers: "main", hub: "main", localhost: "main",
   "ph-notes": "notes", notes: "notes",
   "ph-tasks": "tasks", tasks: "tasks",
   "ph-reader": "reader", reader: "reader",

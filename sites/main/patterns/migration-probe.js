@@ -8,7 +8,7 @@ export async function run(el, sites) {
     <p class="small muted">Enter a target domain to see the exact <code>migrate_from</code> and <code>/.well-known/web-app-origin-association</code> pair for moving Notes off <code>${current}</code>.</p>
     <div class="row" style="margin-top:.5rem">
       <label for="mig-host" style="margin:0">New origin</label>
-      <input type="text" id="mig-host" value="https://notes.example" style="max-width:18rem">
+      <input type="text" id="mig-host" value="https://notes.beyondthetab.dev" style="max-width:18rem">
     </div>
     <div style="display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));margin-top:.6rem">
       <div>

@@ -13,5 +13,5 @@
     "html_handling": "none",
     "not_found_handling": "none"
   },
-  "vars": { "MAIN_HOST": "", "DEMO_SUFFIX": ".kinlan-test.workers.dev" }
+  "vars": { "MAIN_HOST": "beyondthetab.dev", "DEMO_SUFFIX": ".kinlan-test.workers.dev" }
 }
