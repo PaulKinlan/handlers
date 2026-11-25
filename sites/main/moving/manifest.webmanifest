@@ -1,0 +1,15 @@
+{
+  "name": "Mover (old address)",
+  "short_name": "Mover",
+  "description": "A demo app that has moved to another origin on the same site. Installed from here, it can be migrated to its new address.",
+  "id": "/moving/",
+  "start_url": "/moving/",
+  "scope": "/moving/",
+  "display": "standalone",
+  "theme_color": "#6b4f2a",
+  "background_color": "#f7f5f0",
+  "icons": [
+    { "src": "/moving/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/moving/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

@@ -17,6 +17,7 @@ export const probes = [
   { id: "installPrompt", name: "beforeinstallprompt", ok: () => "onbeforeinstallprompt" in window },
   { id: "documentPip", name: "window.documentPictureInPicture", ok: () => typeof window.documentPictureInPicture?.requestWindow === "function" },
   { id: "windowManagement", name: "window.getScreenDetails()", ok: () => typeof window.getScreenDetails === "function" },
+  { id: "paymentRequest", name: "window.PaymentRequest", ok: () => typeof window.PaymentRequest === "function" },
   { id: "digitalCredentials", name: "DigitalCredential API", ok: () => typeof window.DigitalCredential === "function" },
   { id: "contactPicker", name: "navigator.contacts.select()", ok: () => typeof navigator.contacts?.select === "function" },
   { id: "relatedApps", name: "navigator.getInstalledRelatedApps()", ok: () => typeof navigator.getInstalledRelatedApps === "function" },

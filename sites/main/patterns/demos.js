@@ -154,17 +154,38 @@ export const demos = {
     after: (el) => import("/patterns/related-apps-probe.js").then((m) => m.run(el, s)),
   }),
   "app-migration": (s) => ({
-    checks: ["installApi", "standalone"],
+    checks: ["standalone"],
     steps: [
-      "Type a new origin below. The page writes out the <code>migrate_from</code> entry for the new manifest, and the <code>/.well-known/web-app-origin-association</code> file for the old origin.",
-      `Compare it with the association file this origin already serves: ${link("/.well-known/web-app-origin-association", "The association file")}`,
+      `Open Mover at its old address, which is on this origin, and install it. ${link("/moving/", "Open Mover, old address")}`,
+      `Close the app and open it again. A browser with origin migration reads the old manifest, checks it against the new one and against this origin's association file, and offers to update the app to its new address. ${link(s.moved, "Mover, new address")}`,
+      "On <code>localhost</code> the two addresses are not on the same site, so the browser will not offer the move. The check below still reads all three declarations.",
     ],
     after: (el) => import("/patterns/migration-probe.js").then((m) => m.run(el, s)),
+  }),
+  "run-on-os-login": (s) => ({
+    checks: ["standalone"],
+    steps: [
+      `Install Tasks in Chrome on Windows, macOS or Linux, and add a task so that it has a count to show. ${link(s.tasks, "Open Tasks")}`,
+      "Open <code>chrome://apps</code>, right-click Tasks and choose <strong>Start app when you sign in</strong>.",
+      "Sign out of the computer and sign in again. Tasks opens in its own window, with the count on its icon. The time the window opened is shown in Tasks, under \"This browser\".",
+    ],
+  }),
+  "payment-handler": (s) => ({
+    checks: ["paymentRequest"],
+    steps: [
+      "Press <strong>Pay £4.50 with the Wallet</strong> below, in Chrome. This page is the shop.",
+      "The first time, Chrome installs the Wallet's service worker from the Wallet's manifest. Then the Wallet's window opens over this page, on the Wallet's origin.",
+      "Press <strong>Approve</strong> in the Wallet. Its receipt comes back to this page. Press <strong>Decline</strong> instead and this page gets an <code>AbortError</code>.",
+      `Open the Wallet in a tab. It lists the payment, which its service worker recorded with no Wallet page open. ${link(s.wallet, "Open the Wallet")}`,
+    ],
+    after: (el) => import("/patterns/pay-probe.js").then((m) => m.run(el, s)),
   }),
   "digital-credentials": () => ({
     checks: ["digitalCredentials"],
     steps: [
-      "The check below asks your browser which credential protocols it allows, such as <code>openid4vp</code> and <code>org-iso-mdoc</code>. It does not open a wallet.",
+      "Press <strong>Ask for proof of age</strong> below, in Chrome 141 or later.",
+      "On a phone with a wallet that holds a mobile driving licence, the wallet asks whether to share one claim, <code>age_over_18</code>. On a desktop, Chrome offers to continue on a phone.",
+      "Approve it, and the response comes back to this page. Cancel, and this page gets an error. Either way the page says what it received.",
     ],
     after: (el) => import("/patterns/credentials-probe.js").then((m) => m.run(el)),
   }),

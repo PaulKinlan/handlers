@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mover, at its old address | Beyond the Tab</title>
+  <meta name="description" content="A demo app at the address it used to live at. Its manifest says where it has moved to, for the app migration pattern.">
+  <link rel="manifest" href="/moving/manifest.webmanifest">
+  <meta name="theme-color" content="#6b4f2a">
+  <link rel="icon" href="/moving/icon-192.png">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/app.css">
+  <style>
+    :root { --accent: #6b4f2a; --on-accent: #fff; }
+    .facts { display: grid; grid-template-columns: auto 1fr; gap: .25rem .8rem; margin: 0; font-size: var(--step--1); }
+    .facts dt { color: var(--muted); }
+    .facts dd { margin: 0; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-bar">
+      <a class="wordmark" href="/moving/">Mover</a>
+      <nav><a href="/patterns/app-migration/">How this works</a></nav>
+    </header>
+    <section class="app-head">
+      <h1>Mover, at its old address</h1>
+      <p class="note">A demo app that does nothing except move. It was installed from here, and it now lives on an origin of its own on the same site. Install it from this page, then open it again: a browser with origin migration offers to update it to the new address.</p>
+    </section>
+    <main class="cols">
+      <section class="panel ruled">
+        <h2>Where this is</h2>
+        <dl class="facts">
+          <dt>This address</dt><dd><code id="here"></code></dd>
+          <dt>Shown as</dt><dd id="mode"></dd>
+          <dt>Moved to</dt><dd><a id="there" href="#"></a></dd>
+        </dl>
+      </section>
+      <section class="panel">
+        <h2>What this manifest says</h2>
+        <pre id="manifest" class="small">Reading the manifest.</pre>
+      </section>
+    </main>
+  </div>
+  <script type="module">
+    import { sites } from "/_sites.js";
+    const $ = (id) => document.getElementById(id);
+    const installed = matchMedia("(display-mode: standalone), (display-mode: window-controls-overlay), (display-mode: minimal-ui)").matches;
+    $("here").textContent = location.origin + "/moving/";
+    $("mode").textContent = installed ? "an installed app" : "a tab";
+    $("there").href = sites.moved + "/";
+    $("there").textContent = sites.moved + "/";
+    const manifest = await (await fetch("/moving/manifest.webmanifest")).json();
+    $("manifest").textContent = JSON.stringify({ id: manifest.id, migrate_to: manifest.migrate_to }, null, 2);
+  </script>
+</body>
+</html>

@@ -13,6 +13,9 @@ try { tasks = JSON.parse(localStorage.getItem(KEY)) || []; } catch {}
 $("hub-link").href = sites.main;
 render($("checks"), ["rph", "launchQueue", "share", "badge", "wco", "documentPip", "clipboardCustom", "standalone"]);
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+// For the run-on-os-login pattern: after signing in, this shows that the app
+// started with the computer.
+$("opened").textContent = `This window opened at ${new Date().toLocaleTimeString()}, ${matchMedia("(display-mode: browser)").matches ? "in a tab" : "as an installed app"}.`;
 
 function arrive(how, detail) {
   const list = $("arrivals");

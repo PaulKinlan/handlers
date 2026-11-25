@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mover, at its new address | Beyond the Tab</title>
+  <meta name="description" content="A demo app at the origin it moved to. Its manifest names the address it moved from, for the app migration pattern.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#6b4f2a">
+  <link rel="icon" href="/icon-192.png">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/app.css">
+  <style>
+    :root { --accent: #6b4f2a; --on-accent: #fff; }
+    .facts { display: grid; grid-template-columns: auto 1fr; gap: .25rem .8rem; margin: 0; font-size: var(--step--1); }
+    .facts dt { color: var(--muted); }
+    .facts dd { margin: 0; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-bar">
+      <a class="wordmark" href="/">Mover</a>
+      <nav><a data-main href="/patterns/app-migration/">How this works</a></nav>
+    </header>
+    <section class="app-head">
+      <h1>Mover, at its new address</h1>
+      <p class="note">A demo app that does nothing except move. This is where it lives now. Its manifest names the address it came from, and that origin agrees to the move.</p>
+    </section>
+    <main class="cols">
+      <section class="panel ruled">
+        <h2>Where this is</h2>
+        <dl class="facts">
+          <dt>This address</dt><dd><code id="here"></code></dd>
+          <dt>Shown as</dt><dd id="mode"></dd>
+          <dt>Moved from</dt><dd><a id="there" href="#"></a></dd>
+        </dl>
+      </section>
+      <section class="panel">
+        <h2>What this manifest says</h2>
+        <pre id="manifest" class="small">Reading the manifest.</pre>
+      </section>
+    </main>
+  </div>
+  <script type="module">
+    import { sites } from "/_sites.js";
+    const $ = (id) => document.getElementById(id);
+    for (const a of document.querySelectorAll("a[data-main]")) a.href = sites.main + a.getAttribute("href");
+    const installed = matchMedia("(display-mode: standalone), (display-mode: window-controls-overlay), (display-mode: minimal-ui)").matches;
+    $("here").textContent = location.origin + "/";
+    $("mode").textContent = installed ? "an installed app" : "a tab";
+    $("there").href = sites.main + "/moving/";
+    $("there").textContent = sites.main + "/moving/";
+    const manifest = await (await fetch("/manifest.webmanifest")).json();
+    $("manifest").textContent = JSON.stringify({ id: manifest.id, migrate_from: manifest.migrate_from }, null, 2);
+  </script>
+</body>
+</html>

@@ -13,9 +13,11 @@ const LABELS = {
   "ph-tasks": "tasks", tasks: "tasks",
   "ph-reader": "reader", reader: "reader",
   "ph-charts": "charts", charts: "charts",
+  "ph-wallet": "wallet", wallet: "wallet",
+  "ph-moved": "moved", moved: "moved",
 };
-const PROD = { main: "handlers", notes: "ph-notes", tasks: "ph-tasks", reader: "ph-reader", charts: "ph-charts" };
-const LOCAL = { main: "hub", notes: "notes", tasks: "tasks", reader: "reader", charts: "charts" };
+const PROD = { main: "handlers", notes: "ph-notes", tasks: "ph-tasks", reader: "ph-reader", charts: "ph-charts", wallet: "ph-wallet", moved: "ph-moved" };
+const LOCAL = { main: "hub", notes: "notes", tasks: "tasks", reader: "reader", charts: "charts", wallet: "wallet", moved: "moved" };
 
 const TYPES = {
   html: "text/html; charset=utf-8", js: "text/javascript; charset=utf-8", mjs: "text/javascript; charset=utf-8",
@@ -104,29 +106,65 @@ export default {
       return new Response(body, { headers: { "content-type": TYPES.js, "access-control-allow-origin": "*", "cache-control": "no-cache" } });
     }
 
-    // Two-way handshake for scope_extensions: the hub agrees to let the
-    // installed Notes app capture links under /patterns/scope-extensions/.
+    const reading = request.method === "GET" || request.method === "HEAD";
+    const json = (value, type = TYPES.json, extra = {}) => new Response(JSON.stringify(value, null, 2) + "\n", {
+      headers: { "content-type": type, "access-control-allow-origin": "*", "cache-control": "no-cache", ...extra },
+    });
+
+    // What the hub agrees to, for apps on other origins. Notes may take
+    // /patterns/scope-extensions/ into its scope (scope_extensions), and the
+    // Mover app at /moving/ may move to the "moved" origin (migrate_from).
     if (url.pathname === "/.well-known/web-app-origin-association" && site === "main") {
       const origins = siteOrigins(url, env);
-      const assoc = { [origins.notes + "/"]: { scope: "/patterns/scope-extensions/" } };
-      return new Response(JSON.stringify(assoc, null, 2) + "\n", {
-        headers: { "content-type": TYPES.json, "access-control-allow-origin": "*", "cache-control": "no-cache" },
+      return json({
+        [origins.notes + "/"]: { scope: "/patterns/scope-extensions/" },
+        [origins.moved + "/"]: { allow_migration: true },
       });
+    }
+
+    // The Mover app, for the app-migration pattern. The old address is
+    // /moving/ on the hub and the new one is the "moved" origin. Each manifest
+    // names the other, with the origins of wherever this is running.
+    if (reading && site === "main" && url.pathname === "/moving/manifest.webmanifest") {
+      const raw = await readAsset(env, "main/moving/manifest.webmanifest");
+      if (raw) {
+        const origins = siteOrigins(url, env);
+        const manifest = JSON.parse(await new Response(raw).text());
+        manifest.migrate_to = { id: origins.moved + "/", install_url: origins.moved + "/" };
+        return json(manifest, TYPES.webmanifest);
+      }
+    }
+    if (reading && site === "moved" && url.pathname === "/manifest.webmanifest") {
+      const raw = await readAsset(env, "moved/manifest.webmanifest");
+      if (raw) {
+        const origins = siteOrigins(url, env);
+        const manifest = JSON.parse(await new Response(raw).text());
+        manifest.migrate_from = [{ id: origins.main + "/moving/", behavior: "suggest" }];
+        return json(manifest, TYPES.webmanifest);
+      }
+    }
+
+    // The Wallet's payment method, for the payment-handler pattern. A shop
+    // names <wallet>/pay. The browser asks that address where the payment
+    // method manifest is (the Link header), and the manifest names the web app
+    // manifest of the app that handles the method.
+    if (reading && site === "wallet" && (url.pathname === "/pay" || url.pathname === "/payment-manifest.json")) {
+      const origins = siteOrigins(url, env);
+      const link = url.pathname === "/pay" ? { link: `<${origins.wallet}/payment-manifest.json>; rel="payment-method-manifest"` } : {};
+      return json({ default_applications: [origins.wallet + "/manifest.webmanifest"] }, TYPES.json, link);
     }
 
     // Inject the live hub origin into Notes' manifest scope_extensions (and
     // Notes' own URL into related_applications) so they match locally
     // (hub.localhost) and deployed (handlers.workers.dev / MAIN_HOST).
-    if ((request.method === "GET" || request.method === "HEAD") && site === "notes" && url.pathname === "/manifest.webmanifest") {
+    if (reading && site === "notes" && url.pathname === "/manifest.webmanifest") {
       const raw = await readAsset(env, "notes/manifest.webmanifest");
       if (raw) {
         const origins = siteOrigins(url, env);
         const manifest = JSON.parse(await new Response(raw).text());
         manifest.scope_extensions = [{ type: "origin", origin: origins.main }];
         manifest.related_applications = [{ platform: "webapp", url: origins.notes + "/manifest.webmanifest" }];
-        return new Response(JSON.stringify(manifest, null, 2) + "\n", {
-          headers: { "content-type": TYPES.webmanifest, "access-control-allow-origin": "*", "cache-control": "no-cache" },
-        });
+        return json(manifest, TYPES.webmanifest);
       }
     }
 
@@ -145,7 +183,7 @@ export default {
       return Response.redirect(back.toString(), 303);
     }
 
-    if (request.method !== "GET" && request.method !== "HEAD") return new Response("method not allowed", { status: 405 });
+    if (!reading) return new Response("method not allowed", { status: 405 });
     return (await serve(env, site, url.pathname)) || new Response("Not found", { status: 404, headers: { "content-type": TYPES.txt } });
   },
 };

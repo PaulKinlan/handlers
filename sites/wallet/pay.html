@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Approve a payment | Wallet</title>
+  <meta name="theme-color" content="#0b6e7a">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/app.css">
+  <style>
+    :root { --accent: #0b6e7a; --on-accent: #fff; }
+    .sheet { padding: 1.5rem 0 2rem; display: grid; gap: 1rem; max-width: 30rem; }
+    .sheet h1 { font-size: var(--step-3); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <main class="sheet">
+      <p class="small muted">Wallet, on <code id="origin"></code></p>
+      <h1 id="amount">Waiting for the request</h1>
+      <p id="who" class="note"></p>
+      <div class="row">
+        <button id="approve" class="accent" disabled>Approve</button>
+        <button id="decline" class="quiet" disabled>Decline</button>
+      </div>
+      <p id="state" class="small muted" aria-live="polite">No money moves. Approving returns a made-up receipt to the shop.</p>
+    </main>
+  </div>
+  <script type="module" src="/pay.js"></script>
+</body>
+</html>

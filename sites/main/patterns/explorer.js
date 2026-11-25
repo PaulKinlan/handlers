@@ -18,7 +18,7 @@ export function mountExplorer(container) {
         <input type="search" class="filter-search" id="pattern-search" placeholder="Search patterns, APIs, manifest keys" aria-label="Search patterns">
       </div>
       <div class="filter-row small">
-        <div class="filter-pills" data-role="states">
+        <div class="filter-pills" data-role="states"${liveCount === all.length ? " hidden" : ""}>
           <button type="button" class="pill" data-state="all" aria-pressed="true">All states</button>
           <button type="button" class="pill" data-state="live" aria-pressed="false">Live demos (${liveCount})</button>
           <button type="button" class="pill" data-state="planned" aria-pressed="false">Planned (${all.length - liveCount})</button>

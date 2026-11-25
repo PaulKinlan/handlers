@@ -83,7 +83,7 @@
       <div class="hero-copy">
         <h1>Beyond the Tab</h1>
         <p class="hero-lead">How far can an installed web app hook into the operating system, and into other web apps?</p>
-        <p class="muted">Links with custom schemes, files opened from the desktop, the share sheet, launch handling, badges, window chrome, Document PiP, and cross-origin handoffs. Each pattern has a diagram, a live demo where one exists, how it works, what you could build with it, and what goes wrong. The four demo apps run on separate origins, because each registration belongs to an origin.</p>
+        <p class="muted">Links with custom schemes, files opened from the desktop, the share sheet, launch handling, badges, window chrome, Document PiP, and cross-origin handoffs. Each pattern has a diagram, a live demo where one exists, how it works, what you could build with it, and what goes wrong. The demo apps run on separate origins, because each registration belongs to an origin.</p>
         <div class="hero-actions">
           <a class="button accent" href="/skill/">Use the agent skill</a>
           <a class="button quiet" href="#explorer">All patterns</a>
@@ -124,6 +124,13 @@
               <small>Draws and edits Reader's file across origins without holding the file handle</small>
             </div>
             <a class="button quiet" id="charts" href="#">Open</a>
+          </li>
+          <li class="app-row">
+            <div>
+              <strong>Wallet</strong>
+              <small>A payment app: a shop names its payment method and the browser opens it</small>
+            </div>
+            <a class="button quiet" id="wallet" href="#">Open</a>
           </li>
         </ul>
         <div class="quick-try">
@@ -168,6 +175,7 @@
     document.getElementById("tasks").href = sites.tasks;
     document.getElementById("reader").href = sites.reader;
     document.getElementById("charts").href = sites.charts;
+    document.getElementById("wallet").href = sites.wallet;
     mountExplorer(document.getElementById("explorer"));
 
     const skillStatus = document.getElementById("home-skill-status");

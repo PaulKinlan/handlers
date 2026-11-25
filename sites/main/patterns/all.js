@@ -370,12 +370,13 @@ export const all = [
     related: ["document-pip", "os-file-handoff"],
   },
   {
-    id: "app-migration", group: "presence", state: "planned",
+    id: "app-migration", group: "presence", state: "live", app: "moved",
     title: "Moving an installed app to another origin: migrate_from",
     blurb: "An installed app is tied to its origin. <code>migrate_from</code> lets it move to another origin on the same site without the person installing it again.",
     how: [
       "The manifest on the new origin has an <code>id</code>, and names the old app's id under <code>migrate_from</code>. The old origin agrees by listing the new app's id with <code>allow_migration: true</code> in <code>/.well-known/web-app-origin-association</code>.",
       "The old manifest can name the new app under <code>migrate_to</code> as well, so the browser finds the move without the person visiting the new origin.",
+      "Mover is a small app for this page. It was at <code>/moving/</code> on this origin and now has an origin of its own on the same site. Its two manifests and this origin's association file are the real ones, and the check on this page reads all three.",
       "When both sides agree, the browser offers the person the update. With <code>behavior: \"suggest\"</code> they can ignore it. With <code>\"force\"</code> they have to move or uninstall. After the move, the installed app belongs to the new origin.",
     ],
     build: ["Moving an app from <code>www.example.com/app/</code> to <code>app.example.com</code> and keeping the installs it has.", "Folding several old subdomains into one origin."],
@@ -384,12 +385,13 @@ export const all = [
     related: ["scope-extensions", "web-install"],
   },
   {
-    id: "run-on-os-login", group: "presence", state: "planned",
+    id: "run-on-os-login", group: "presence", state: "live", app: "tasks",
     title: "Starting with the computer: Run on OS Login",
     blurb: "An installed desktop app can start when the person signs in to Windows, macOS or Linux.",
     how: [
       "This one is not a manifest field. The person turns it on in the app's settings in the browser, or an administrator sets it with the <code>WebAppSettings</code> policy (<code>run_on_os_login</code>).",
       "With <code>launch_handler</code> and a badge, a mail or chat app is open and showing its count from the moment the person signs in.",
+      "Tasks has no code for this. The setting is in <code>chrome://apps</code>, on the app's menu.",
     ],
     build: ["A chat or mail app that is already open after sign-in.", "A small capture or sync tool, installed as an app."],
     traps: ["Chromium on desktop only. A site cannot ask for it, and cannot find out whether it is on.", "There is no launch event in the service worker, so starting at sign-in always opens a window."],
@@ -413,25 +415,41 @@ export const all = [
 
   // ------------------------------------------------------------ between
   {
-    id: "payment-handler", group: "between", state: "planned",
+    id: "payment-handler", group: "between", state: "live", app: "wallet",
     title: "Being the app the browser asks to pay: Payment Handler",
     blurb: "A web app registers as a payment method, and the browser opens it when another site calls the Payment Request API.",
-    how: ["A service worker registers the payment app, and a payment method manifest on the app's origin names it. When a merchant asks for that method, the browser runs the app's service worker and opens its window."],
-    build: ["A demo wallet that pays a demo shop on another origin, so the handoff can be seen end to end."],
-    traps: ["Chromium only.", "The payment method manifest and its URL must match exactly."],
-    links: [["Payment Handler API", "https://w3c.github.io/payment-handler/"], ["Payment Request API", "https://w3c.github.io/payment-request/"]],
+    how: [
+      "A payment method is a URL on the payment app's origin. A shop passes that URL to <code>new PaymentRequest()</code> and calls <code>show()</code>.",
+      "The browser asks that URL for a payment method manifest, which names the app's web app manifest. The web app manifest names a service worker under <code>serviceworker</code>, and the browser installs it the first time, with no visit to the app.",
+      "The service worker gets a <code>paymentrequest</code> event with the shop's origin and the total. It calls <code>openWindow()</code> to show a page of its own over the shop, and resolves <code>respondWith()</code> with a method name and details. The shop receives them as a <code>PaymentResponse</code>.",
+      "The Wallet on this site is the payment app, and this page is the shop. The Wallet returns a made-up receipt. No money moves.",
+    ],
+    build: [
+      "A wallet that any shop can take payment from by naming one URL, with no script from the wallet on the shop's page.",
+      "A shop that offers a payment app it has no account with.",
+      "A sign-in or approval step run by another origin, shown over the page that asked and answered to it.",
+    ],
+    traps: [
+      "Chromium only.",
+      "The method name the service worker returns must be the URL the shop asked for.",
+      "The service worker is not asked <code>canmakepayment</code> before it is installed, so the first answer to <code>canMakePayment()</code> says only that the app can be found.",
+      "Rejecting <code>respondWith()</code> for any reason reaches the shop as an <code>AbortError</code>. The shop cannot tell a decline from a closed window.",
+      "Everything in the <code>paymentrequest</code> event came from the shop. A real wallet checks the amount on its server before charging.",
+    ],
+    links: [["Payment Handler API", "https://w3c.github.io/payment-handler/"], ["Payment Request API", "https://w3c.github.io/payment-request/"], ["web.dev: setting up a payment method", "https://web.dev/articles/setting-up-a-payment-method"]],
     related: ["digital-credentials", "intents-lineage"],
   },
   {
-    id: "digital-credentials", group: "between", state: "planned",
+    id: "digital-credentials", group: "between", state: "live",
     title: "Asking an OS wallet for proof: Digital Credentials API",
     blurb: "A site asks for a verified credential, such as proof of age, from a wallet app on the device, and gets a signed answer back.",
     how: [
       "The page calls <code>navigator.credentials.get({ digital: { requests: [...] } })</code> with a request in a protocol such as OpenID4VP or ISO mdoc.",
       "The browser passes the request to the operating system, the person approves what is shared in their wallet app, and the signed response comes back to the page. A link, a file or a share has no reply. This does.",
+      "The button on this page asks for one claim, <code>age_over_18</code>, from a mobile driving licence. The response is encrypted to a key that a verifier would keep on its server. This page has no verifier, so it says what came back and does not check it.",
     ],
     build: ["An age check that does not need a photo of an ID.", "Proof of identity or membership from a wallet on the phone."],
-    traps: ["Arriving in Chrome and Safari. The protocols, and the wallets that support them, are still changing.", "Testing it from end to end needs a wallet with a credential in it, and a verifier."],
+    traps: ["In Chrome from version 141 and Safari from version 26. The protocols, and the wallets that support them, are still changing.", "Testing it from end to end needs a wallet with a credential in it, and a verifier."],
     links: [["W3C Digital Credentials API", "https://w3c-fedid.github.io/digital-credentials/"], ["Chrome for Developers: Digital Credentials API", "https://developer.chrome.com/blog/digital-credentials-api-shipped"]],
     related: ["payment-handler", "contact-picker", "intents-lineage"],
   },

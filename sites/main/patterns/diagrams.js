@@ -323,15 +323,15 @@ export const diagrams = {
     ],
   },
   "payment-handler": {
-    caption: "A merchant asks, the browser opens the wallet, and the wallet's answer goes back to the merchant. Links, files and shares have no such reply.",
+    caption: "A shop asks, the browser finds and opens the wallet, and the wallet's answer goes back to the shop. Links, files and shares have no such reply.",
     actors: [
-      { label: "Merchant", sub: "Origin A", tone: "a" },
+      { label: "Shop", sub: "Origin A, this page", tone: "a" },
       { label: "Browser", sub: "Payment Request", tone: "sys" },
-      { label: "Wallet app", sub: "Origin B, worker and window", tone: "b" },
+      { label: "Wallet", sub: "Origin B, worker and window", tone: "b" },
     ],
     steps: [
-      { from: 2, to: 1, label: "Registers a payment method manifest" },
       { from: 0, to: 1, label: "new PaymentRequest(method, details).show()" },
+      { from: 1, to: 2, label: "GET <wallet>/pay → payment method manifest", sub: "then installs the service worker named in the app's manifest" },
       { from: 1, to: 2, label: "paymentrequest event in the wallet's service worker" },
       { from: 2, to: 0, label: "The person approves → PaymentResponse", sub: "the caller gets a reply" },
     ],

@@ -23,11 +23,13 @@ test("sites are chosen by the first label of the host", () => {
   assert.equal(siteFor("notes.localhost:8787"), "notes");
   assert.equal(siteFor("ph-tasks.kinlan-test.workers.dev"), "tasks");
   assert.equal(siteFor("handlers.kinlan-test.workers.dev"), "main");
+  assert.equal(siteFor("wallet.beyondthetab.dev"), "wallet");
+  assert.equal(siteFor("ph-moved.kinlan-test.workers.dev"), "moved");
   assert.equal(siteFor("unknown.example"), "main");
 });
 
 test("each site knows where the others are, locally and deployed", () => {
-  assert.deepEqual(siteOrigins(new URL("http://notes.localhost:8787/"), env), { main: "http://hub.localhost:8787", notes: "http://notes.localhost:8787", tasks: "http://tasks.localhost:8787", reader: "http://reader.localhost:8787", charts: "http://charts.localhost:8787" });
+  assert.deepEqual(siteOrigins(new URL("http://notes.localhost:8787/"), env), { main: "http://hub.localhost:8787", notes: "http://notes.localhost:8787", tasks: "http://tasks.localhost:8787", reader: "http://reader.localhost:8787", charts: "http://charts.localhost:8787", wallet: "http://wallet.localhost:8787", moved: "http://moved.localhost:8787" });
   assert.equal(siteOrigins(new URL("https://ph-reader.kinlan-test.workers.dev/"), env).charts, "https://ph-charts.kinlan-test.workers.dev");
   assert.equal(siteOrigins(new URL("https://ph-notes.kinlan-test.workers.dev/"), env).tasks, "https://ph-tasks.kinlan-test.workers.dev");
   assert.equal(siteOrigins(new URL("https://ph-notes.kinlan-test.workers.dev/"), { ...env, MAIN_HOST: "beyondthetab.dev" }).main, "https://beyondthetab.dev");
@@ -37,6 +39,8 @@ test("each site knows where the others are, locally and deployed", () => {
     tasks: "https://tasks.beyondthetab.dev",
     reader: "https://reader.beyondthetab.dev",
     charts: "https://charts.beyondthetab.dev",
+    wallet: "https://wallet.beyondthetab.dev",
+    moved: "https://moved.beyondthetab.dev",
   });
 });
 
@@ -60,7 +64,7 @@ test("each app serves its own manifest, with the handlers it registers", async (
 });
 
 test("shared files are served on every origin", async () => {
-  for (const host of ["hub", "notes", "tasks", "reader", "charts"]) assert.equal((await get(`http://${host}.localhost/base.css`)).status, 200);
+  for (const host of ["hub", "notes", "tasks", "reader", "charts", "wallet", "moved"]) assert.equal((await get(`http://${host}.localhost/base.css`)).status, 200);
 });
 
 test("pattern pages are all drawn by one file", async () => {
@@ -190,3 +194,51 @@ test("SKILL.md and /skill/ are served and every pattern link in SKILL.md exists"
   for (const id of referenced) assert.ok(ids.has(id), `SKILL.md links to unknown pattern "${id}"`);
 });
 
+
+test("the wallet's payment method leads to its manifest, and the manifest to its service worker", async () => {
+  for (const [origin, e] of [["http://wallet.localhost:8787", env], ["https://wallet.beyondthetab.dev", { ...env, MAIN_HOST: "beyondthetab.dev", DEMO_SUFFIX: "" }]]) {
+    const fetchIt = (path, init) => worker.fetch(new Request(origin + path, init), e);
+    // The payment method identifier points at the payment method manifest.
+    const method = await fetchIt("/pay", { method: "HEAD" });
+    assert.equal(method.status, 200);
+    assert.equal(method.headers.get("link"), `<${origin}/payment-manifest.json>; rel="payment-method-manifest"`);
+    // The payment method manifest names the web app manifest.
+    const payment = await (await fetchIt("/payment-manifest.json")).json();
+    assert.deepEqual(payment.default_applications, [origin + "/manifest.webmanifest"]);
+    // The web app manifest has what Chrome needs to install the handler: a name, an icon and a service worker.
+    const res = await fetchIt("/manifest.webmanifest");
+    assert.equal(res.headers.get("content-type"), "application/manifest+json");
+    const manifest = await res.json();
+    assert.ok(manifest.name && manifest.icons.length);
+    assert.equal(manifest.serviceworker.src, "/sw.js");
+    const sw = await fetchIt(manifest.serviceworker.src);
+    assert.equal(sw.status, 200);
+    assert.match(await sw.text(), /addEventListener\("paymentrequest"/);
+    assert.equal((await fetchIt("/pay.html")).status, 200);
+  }
+  // Only the wallet has a payment method.
+  assert.equal((await get("http://hub.localhost/pay")).status, 404);
+});
+
+test("the Mover app's two manifests and the hub's association file agree about the move", async () => {
+  for (const [hub, moved, e] of [
+    ["http://hub.localhost:8787", "http://moved.localhost:8787", env],
+    ["https://beyondthetab.dev", "https://moved.beyondthetab.dev", { ...env, MAIN_HOST: "beyondthetab.dev", DEMO_SUFFIX: "" }],
+  ]) {
+    const read = async (url) => (await worker.fetch(new Request(url), e)).json();
+    const oldManifest = await read(hub + "/moving/manifest.webmanifest");
+    const newManifest = await read(moved + "/manifest.webmanifest");
+    const assoc = await read(hub + "/.well-known/web-app-origin-association");
+    // The ids are relative in the files, and resolve against where each manifest is served.
+    const oldId = new URL(oldManifest.id, hub + "/moving/manifest.webmanifest").href;
+    const newId = new URL(newManifest.id, moved + "/manifest.webmanifest").href;
+    assert.equal(oldId, hub + "/moving/");
+    assert.equal(newId, moved + "/");
+    assert.deepEqual(newManifest.migrate_from, [{ id: oldId, behavior: "suggest" }]);
+    assert.deepEqual(assoc[newId], { allow_migration: true });
+    assert.equal(oldManifest.migrate_to.id, newId);
+    assert.ok(oldManifest.start_url.startsWith(oldManifest.scope));
+  }
+  assert.equal((await get("http://hub.localhost/moving/")).status, 200);
+  assert.equal((await get("http://moved.localhost/")).status, 200);
+});

@@ -21,6 +21,7 @@
   },
   // The hub lives at MAIN_HOST and each demo app on its own subdomain
   // (notes.beyondthetab.dev, tasks.beyondthetab.dev, reader.beyondthetab.dev,
-  // charts.beyondthetab.dev). Leave DEMO_SUFFIX empty to use subdomains.
+  // charts.beyondthetab.dev, wallet.beyondthetab.dev, moved.beyondthetab.dev).
+  // Leave DEMO_SUFFIX empty to use subdomains.
   "vars": { "MAIN_HOST": "beyondthetab.dev", "DEMO_SUFFIX": "" }
 }
