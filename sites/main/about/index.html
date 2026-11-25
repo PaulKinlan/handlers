@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About this site | Beyond the Tab</title>
+  <meta name="description" content="How Beyond the Tab came to be, what it is for, who built it and how it works.">
+  <meta name="theme-color" content="#171a18">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/census/census.css">
+  <style>
+    .links { display: grid; grid-template-columns: minmax(7rem, auto) minmax(0, 1fr); gap: .5rem 1.2rem; margin: 0; }
+    .links dt { color: var(--muted); font-size: var(--step--1); padding-top: .15rem; }
+    .links dd { margin: 0; overflow-wrap: anywhere; }
+    @media (max-width: 560px) { .links { grid-template-columns: minmax(0, 1fr); gap: .1rem; } .links dd { margin-bottom: .7rem; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-bar">
+      <a class="wordmark" href="/">Beyond the Tab</a>
+      <nav><a href="/patterns/">Patterns</a><a href="/skill/">Agent skill</a><a href="/census/">Browser census</a><a href="/missing/">What is missing</a><a href="/about/" aria-current="page">About</a></nav>
+    </header>
+    <div class="stack" style="padding-block:2.5rem 1.5rem; --gap:1.1rem">
+      <h1 style="font-size:var(--step-3)">About this site</h1>
+      <p style="font-size:var(--step-1); max-width:52ch">This site started with the step that comes before two web apps can talk to each other: how does one of them get opened in the first place? It turned into a set of working demos of the ways a web app can connect to the operating system and to other apps.</p>
+    </div>
+    <main>
+      <section id="started">
+        <h2>How it started</h2>
+        <p><a href="https://port-authority.dev">Port Authority</a> is my set of experiments with <code>MessagePort</code>: what two sites can do once each holds one end of a channel. It begins with two pages that already have a port to each other. It does not cover how an app gets opened to begin with, by a link with a scheme of its own, a file double-clicked in the operating system, or a share from another app. The browser and the operating system own those routes, and an app can only register for them. This site is about those registrations.</p>
+        <p>I have written about this for a long time. <a href="https://paul.kinlan.me/what-happened-to-web-intents/">Web Intents</a> was an attempt at one way for an app to ask for an action, for another app to provide it, and for an answer to come back. It was withdrawn. What the platform has instead is a separate API for each kind of action: protocol handlers, file handlers, share targets, payment handlers. This site puts them in one place, running, to show what each one can and cannot do.</p>
+        <p>The first version, in November 2026, was three sites: a hub, a notes app and a tasks app, each on its own origin, so that a link or a file on one origin could open an app on another. It was called Handlers.</p>
+      </section>
+
+      <section id="grew">
+        <h2>From handlers to the rest of the site</h2>
+        <p>Every one of these registrations belongs to an origin, so every demo app here has an origin of its own. A link on the hub opens <a href="/patterns/protocol-handlers/">Notes</a>, which is somewhere else. A share from Tasks arrives in Notes. Nothing is faked on one page.</p>
+        <p>The next pieces were the <a href="/census/">census</a>, which checks each way a web app can be opened in the browser you are reading with, the list of <a href="/missing/">what is missing</a>, and <a href="/patterns/os-file-handoff/">Reader and Charts</a>, where an app that was handed a file by the operating system lends it to an app on another origin. That demo is where this site and Port Authority meet: the file arrives through the operating system, and it is lent across origins over a port.</p>
+        <p>After that the list went past handlers. What can an installed app do with <a href="/patterns/window-chrome/">its title bar</a>, with <a href="/patterns/tabbed-apps/">tabs</a>, or with <a href="/patterns/document-pip/">a window that stays on top</a>? Can a page <a href="/patterns/web-install/">install an app on another origin</a>? Can an installed app <a href="/patterns/app-migration/">move to a new address</a>? Which routes give the caller an answer, such as <a href="/patterns/payment-handler/">a payment</a> or <a href="/patterns/digital-credentials/">a credential</a>, and which do not? The site was called Handlers until it got its domain.</p>
+        <p>Each pattern has a page of its own with the same parts: a diagram of who sends what to whom, a demo that uses the apps here, the checks for the browser you are reading with, how it works, what you could build with it, and what goes wrong.</p>
+      </section>
+
+      <section id="intent">
+        <h2>What it is for</h2>
+        <p>A native app can be opened by a link scheme, a file type or a share, and can hand a result back to whatever opened it. The web has most of the first half of that now. It has very little of the second: a handler is given a string, a form or some file handles, and the app that started it hears nothing back.</p>
+        <p>So the site does three things. It shows what works today, with demos you can run. It writes down what goes wrong, on every page. And it says what is missing: <a href="/missing/">What web app integration is missing</a> is the list of what I want browser vendors to build or fix, with a check for each gap where one can be run.</p>
+        <p>It is also meant to be used on other sites. The <a href="/skill/">agent skill</a> is one file that you give to a coding agent. The agent reads your codebase, your manifest and your plans, checks them against the patterns here, and reports which integrations fit your site and which ones to skip.</p>
+      </section>
+
+      <section id="who">
+        <h2>Who built it and how it works</h2>
+        <p>I'm <a href="https://paul.kinlan.me/">Paul Kinlan</a> and I lead the Chrome and Open Web Developer Relations team at Google. This is my own set of experiments, not official Chrome documentation.</p>
+        <p>There is no framework and no bundler. The pages are plain HTML and ES modules. One Cloudflare Worker script picks a folder of files by hostname, which is how the hub and every demo app live in one repository and still have an origin each.</p>
+        <p>Not every demo has been run on every platform. The checks on each page run in your browser when you open it, but the demos that need ChromeOS, a wallet that holds a credential, or signing out of the computer have not been run from end to end. If one does not work for you, or something here is wrong, please <a href="https://github.com/PaulKinlan/handlers/issues">open an issue</a>.</p>
+      </section>
+
+      <section id="support">
+        <h2>Browser support</h2>
+        <p>Most of what is here works in Chromium only, and a lot of it on desktop only. A few parts work more widely: sharing, badges, and <code>registerProtocolHandler</code> in a tab. Each pattern page says where it works under "What goes wrong", and the <a href="/census/">census</a> checks the browser you are reading with.</p>
+      </section>
+
+      <section id="links">
+        <h2>Project links</h2>
+        <dl class="links">
+          <dt>Source code</dt><dd><a href="https://github.com/PaulKinlan/handlers">github.com/PaulKinlan/handlers</a></dd>
+          <dt>Where it came from</dt><dd><a href="https://port-authority.dev">Port Authority</a>, experiments with <code>MessagePort</code>, intents and agents</dd>
+          <dt>For your own site</dt><dd><a href="/skill/">The agent skill</a>, and the file itself at <a href="/SKILL.md">/SKILL.md</a></dd>
+          <dt>Checks and gaps</dt><dd><a href="/census/">Browser census</a>, <a href="/missing/">What web app integration is missing</a></dd>
+          <dt>Related writing</dt><dd><a href="https://paul.kinlan.me/what-happened-to-web-intents/">What happened to Web Intents?</a>, <a href="https://paul.kinlan.me/reinventing-web-intents/">Reinventing Web Intents</a>, <a href="https://paul.kinlan.me/the-web-that-never-was/">The web that never was</a>, <a href="https://paul.kinlan.me/detecting-if-a-url-scheme-can-be-handled/">Detecting if a URL scheme can be handled</a>, <a href="https://aifoc.us/are-pwas-cooked/">are pwas cooked?</a>, <a href="https://aifoc.us/webmcp-is-the-new-web-intents/">webmcp is the new web intents ... maybe</a></dd>
+          <dt>Author</dt><dd><a href="https://paul.kinlan.me/">Paul Kinlan</a> (<a href="https://github.com/PaulKinlan">@PaulKinlan</a>)</dd>
+        </dl>
+      </section>
+    </main>
+    <footer class="small muted" style="padding-block:2rem 4rem">Beyond the Tab (<code>beyondthetab.dev</code>). By <a href="https://paul.kinlan.me">Paul Kinlan</a>.</footer>
+  </div>
+</body>
+</html>

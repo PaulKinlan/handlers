@@ -242,3 +242,20 @@ test("the Mover app's two manifests and the hub's association file agree about t
   assert.equal((await get("http://hub.localhost/moving/")).status, 200);
   assert.equal((await get("http://moved.localhost/")).status, 200);
 });
+
+test("the about page is served, and every link from it into this site resolves", async () => {
+  const res = await get("http://hub.localhost/about/");
+  assert.equal(res.status, 200);
+  const html = await res.text();
+  const paths = [...new Set([...html.matchAll(/href="(\/[^"#]*)/g)].map((m) => m[1]))];
+  assert.ok(paths.includes("/missing/") && paths.includes("/skill/") && paths.some((p) => p.startsWith("/patterns/")));
+  for (const path of paths) assert.equal((await get("http://hub.localhost" + path)).status, 200, path);
+  // Every pattern it names exists.
+  const { all } = await import("../sites/main/patterns/all.js");
+  const ids = new Set(all.map((p) => p.id));
+  for (const [, id] of html.matchAll(/href="\/patterns\/([a-z0-9-]+)\//g)) assert.ok(ids.has(id), id);
+  // And every hub page links to it.
+  for (const page of ["/", "/patterns/", "/patterns/protocol-handlers/", "/skill/", "/census/", "/missing/"]) {
+    assert.match(await (await get("http://hub.localhost" + page)).text(), /href="\/about\/"/, page);
+  }
+});
