@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About this site | Beyond the Tab</title>
-  <meta name="description" content="Why I started Beyond the Tab, what it is for, who built it and how it works.">
+  <meta name="description" content="Beyond the Tab is by Paul Kinlan, who leads Chrome and Open Web Developer Relations at Google. Why he started it, what it is for and how it works.">
   <meta name="theme-color" content="#171a18">
   <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/census/census.css">
@@ -23,7 +23,8 @@
     </header>
     <div class="stack" style="padding-block:2.5rem 1.5rem; --gap:1.1rem">
       <h1 style="font-size:var(--step-3)">About this site</h1>
-      <p style="font-size:var(--step-1); max-width:52ch">I started this because I loved what Chrome has been doing to push the platform forward, and I think it should be a lot easier for site owners to add integrations to all the places in an operating system where they make sense.</p>
+      <p style="font-size:var(--step-1); max-width:52ch">I'm <a href="https://paul.kinlan.me/">Paul Kinlan</a> and I lead the Chrome and Open Web Developer Relations team at Google. I started this because I loved what Chrome has been doing to push the platform forward, and I think it should be a lot easier for site owners to add integrations to all the places in an operating system where they make sense.</p>
+      <p>This is my own set of experiments, not official Chrome documentation.</p>
     </div>
     <main>
       <section id="started">
@@ -50,8 +51,7 @@
       </section>
 
       <section id="who">
-        <h2>Who built it and how it works</h2>
-        <p>I'm <a href="https://paul.kinlan.me/">Paul Kinlan</a> and I lead the Chrome and Open Web Developer Relations team at Google. This is my own set of experiments, not official Chrome documentation.</p>
+        <h2>How it works</h2>
         <p>There is no framework and no bundler. The pages are plain HTML and ES modules. One Cloudflare Worker script picks a folder of files by hostname, which is how the hub and every demo app live in one repository and still have an origin each.</p>
         <p>Not every demo has been run on every platform. The checks on each page run in your browser when you open it, but the demos that need ChromeOS, a wallet that holds a credential, or signing out of the computer have not been run from end to end. If one does not work for you, or something here is wrong, please <a href="https://github.com/PaulKinlan/handlers/issues">open an issue</a>.</p>
       </section>
