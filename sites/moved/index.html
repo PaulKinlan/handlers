@@ -26,6 +26,7 @@
     <section class="app-head">
       <h1>Mover, at its new address</h1>
       <p class="note">A demo app that does nothing except move. This is where it lives now. Its manifest names the address it came from, and that origin agrees to the move.</p>
+      <div class="row install" id="install"></div>
     </section>
     <main class="cols">
       <section class="panel ruled">
@@ -44,6 +45,8 @@
   </div>
   <script type="module">
     import { sites } from "/_sites.js";
+    import { offerInstall } from "/install.js";
+    offerInstall(document.getElementById("install"), "Mover", "This is the address the app moves to. To see a move, install Mover from its old address instead.");
     const $ = (id) => document.getElementById(id);
     for (const a of document.querySelectorAll("a[data-main]")) a.href = sites.main + a.getAttribute("href");
     const installed = matchMedia("(display-mode: standalone), (display-mode: window-controls-overlay), (display-mode: minimal-ui)").matches;

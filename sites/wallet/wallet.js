@@ -4,11 +4,15 @@
 // for the payment method.
 import { sites } from "/_sites.js";
 import { render } from "/detect.js";
+import { offerInstall } from "/install.js";
 
 const $ = (id) => document.getElementById(id);
 for (const a of document.querySelectorAll("a[data-main]")) a.href = sites.main + a.getAttribute("href");
 $("method").textContent = location.origin + "/pay";
 render($("checks"), ["paymentRequest", "standalone"]);
+// The Wallet takes payments without being installed: the browser installs its
+// service worker on its own. Installing the app only gives it a window.
+offerInstall($("install"), "Wallet", "The Wallet takes payments without being installed. Installing gives it a window of its own.");
 
 const registration = "serviceWorker" in navigator ? await navigator.serviceWorker.getRegistration("/") : null;
 $("worker").textContent = registration

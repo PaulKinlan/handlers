@@ -1,7 +1,11 @@
 // The reader's page: where files come in, and the port that goes out.
 import { sites } from "/_sites.js";
+import { offerInstall } from "/install.js";
 import { expose, offer } from "/hawser.js";
 import { Reader, LENT } from "/reader.js";
+
+// Most of what the manifest declares only works once the app is installed.
+offerInstall(document.getElementById("install"), "Reader", "Installing is what puts Reader in your file manager's Open with list for .csv, .txt and .md files.");
 
 const $ = (id) => document.getElementById(id);
 const reader = new Reader({

@@ -25,7 +25,8 @@
     </header>
     <section class="app-head">
       <h1>Mover, at its old address</h1>
-      <p class="note">A demo app that does nothing except move. It was installed from here, and it now lives on an origin of its own on the same site. Install it from this page, then open it again: a browser with origin migration offers to update it to the new address.</p>
+      <p class="note">A demo app that does nothing except move. It was installed from here, and it now lives on an origin of its own on the same site. Install it with the button below, then open it again: a browser with origin migration offers to update it to the new address.</p>
+      <div class="row install" id="install"></div>
     </section>
     <main class="cols">
       <section class="panel ruled">
@@ -44,6 +45,8 @@
   </div>
   <script type="module">
     import { sites } from "/_sites.js";
+    import { offerInstall } from "/install.js";
+    offerInstall(document.getElementById("install"), "Mover", "Install it from here, at its old address. This is the app that a browser with origin migration offers to move.");
     const $ = (id) => document.getElementById(id);
     const installed = matchMedia("(display-mode: standalone), (display-mode: window-controls-overlay), (display-mode: minimal-ui)").matches;
     $("here").textContent = location.origin + "/moving/";

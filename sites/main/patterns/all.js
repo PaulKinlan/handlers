@@ -281,6 +281,7 @@ export const all = [
       "Until now a page had to catch the non-standard <code>beforeinstallprompt</code> event, and could only offer to install itself.",
       "The Web Install API adds <code>navigator.install()</code> and an <code>&lt;install&gt;</code> element. A page can ask to install itself, or an app on another origin by its install URL and manifest id. The browser shows its own dialog and the person decides.",
       "The buttons on this page ask the browser to install Notes, Tasks, Reader and Charts, each from its own origin.",
+      "Each demo app also has an Install button of its own. It keeps the <code>beforeinstallprompt</code> event and shows the browser's dialog when pressed, uses <code>navigator.install()</code> where there is no event, and otherwise says where the browser's own install control is.",
     ],
     build: [
       "A directory of web apps with an install button for each.",

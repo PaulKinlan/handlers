@@ -1,7 +1,11 @@
 // The chart app: it is lent a port by the reader, and that port is all it has.
 import { sites } from "/_sites.js";
+import { offerInstall } from "/install.js";
 import { wrap, accept, closed } from "/hawser.js";
 import { parse, serialize, numericColumn } from "/csv.js";
+
+// Most of what the manifest declares only works once the app is installed.
+offerInstall(document.getElementById("install"), "Charts", "Charts works in a tab. Installing gives it a window of its own.");
 
 const $ = (id) => document.getElementById(id);
 for (const a of document.querySelectorAll("a[data-main]")) a.href = sites.main + a.getAttribute("href");

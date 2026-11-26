@@ -2,8 +2,12 @@
 // link (/?u=...), a launch with files or a URL (launchQueue), a share
 // (POST to /share, answered by sw.js), or the "New note" shortcut.
 import { sites } from "/_sites.js";
+import { offerInstall } from "/install.js";
 import { render } from "/detect.js";
 import { TASKS_MIME, decodeTasks } from "/clipboard-format.js";
+
+// Most of what the manifest declares only works once the app is installed.
+offerInstall(document.getElementById("install"), "Notes", "Installing is what puts Notes in the share sheet, in the Open with list for .webnote files, and behind web+note: links.");
 
 const $ = (id) => document.getElementById(id);
 const editor = $("editor");

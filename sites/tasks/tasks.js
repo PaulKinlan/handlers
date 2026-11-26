@@ -2,8 +2,12 @@
 // from web+task: links, .webtasks files (one task per line), the share sheet
 // (GET, so the share is just a query string) and the form.
 import { sites } from "/_sites.js";
+import { offerInstall } from "/install.js";
 import { render } from "/detect.js";
 import { TASKS_MIME, encodeTasks } from "/clipboard-format.js";
+
+// Most of what the manifest declares only works once the app is installed.
+offerInstall(document.getElementById("install"), "Tasks", "Installing is what puts Tasks in the share sheet and in the Open with list for .webtasks files, and gives its icon a count.");
 
 const $ = (id) => document.getElementById(id);
 const KEY = "tasks";
