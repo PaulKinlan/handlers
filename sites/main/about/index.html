@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About this site | Beyond the Tab</title>
-  <meta name="description" content="How Beyond the Tab came to be, what it is for, who built it and how it works.">
+  <meta name="description" content="Why I started Beyond the Tab, what it is for, who built it and how it works.">
   <meta name="theme-color" content="#171a18">
   <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/census/census.css">
@@ -23,12 +23,14 @@
     </header>
     <div class="stack" style="padding-block:2.5rem 1.5rem; --gap:1.1rem">
       <h1 style="font-size:var(--step-3)">About this site</h1>
-      <p style="font-size:var(--step-1); max-width:52ch">This site started with the step that comes before two web apps can talk to each other: how does one of them get opened in the first place? It turned into a set of working demos of the ways a web app can connect to the operating system and to other apps.</p>
+      <p style="font-size:var(--step-1); max-width:52ch">I started this because I loved what Chrome has been doing to push the platform forward, and I think it should be a lot easier for site owners to add integrations to all the places in an operating system where they make sense.</p>
     </div>
     <main>
       <section id="started">
         <h2>How it started</h2>
-        <p><a href="https://port-authority.dev">Port Authority</a> is my set of experiments with <code>MessagePort</code>: what two sites can do once each holds one end of a channel. It begins with two pages that already have a port to each other. It does not cover how an app gets opened to begin with, by a link with a scheme of its own, a file double-clicked in the operating system, or a share from another app. The browser and the operating system own those routes, and an app can only register for them. This site is about those registrations.</p>
+        <p>What Chrome has been doing is this: a web app can now open files from the desktop, handle links with a scheme of its own, sit in the share sheet, put a count on its icon and draw into its title bar.</p>
+        <p>It still surprises me that <code>share_target</code> is hardly used when I want to share an image or a link to my web-based social networks. Frequently these are progressive enhancements that just add a nice sparkle to a website's experience, and I think it should be a lot easier for a site owner to add them.</p>
+        <p>The other half of the start was <a href="https://port-authority.dev">Port Authority</a>, my set of experiments with <code>MessagePort</code>: what two sites can do once each holds one end of a channel. It begins with two pages that already have a port to each other, and does not cover how an app gets opened to begin with. The browser and the operating system own those routes, and an app can only register for them. This site is about those registrations.</p>
         <p>I have written about this for a long time. <a href="https://paul.kinlan.me/what-happened-to-web-intents/">Web Intents</a> was an attempt at one way for an app to ask for an action, for another app to provide it, and for an answer to come back. It was withdrawn. What the platform has instead is a separate API for each kind of action: protocol handlers, file handlers, share targets, payment handlers. This site puts them in one place, running, to show what each one can and cannot do.</p>
         <p>The first version, in November 2026, was three sites: a hub, a notes app and a tasks app, each on its own origin, so that a link or a file on one origin could open an app on another. It was called Handlers.</p>
       </section>
@@ -43,9 +45,8 @@
 
       <section id="intent">
         <h2>What it is for</h2>
-        <p>A native app can be opened by a link scheme, a file type or a share, and can hand a result back to whatever opened it. The web has most of the first half of that now. It has very little of the second: a handler is given a string, a form or some file handles, and the app that started it hears nothing back.</p>
-        <p>So the site does three things. It shows what works today, with demos you can run. It writes down what goes wrong, on every page. And it says what is missing: <a href="/missing/">What web app integration is missing</a> is the list of what I want browser vendors to build or fix, with a check for each gap where one can be run.</p>
-        <p>It is also meant to be used on other sites. The <a href="/skill/">agent skill</a> is one file that you give to a coding agent. The agent reads your codebase, your manifest and your plans, checks them against the patterns here, and reports which integrations fit your site and which ones to skip.</p>
+        <p>I want it to be easier for a site owner to add these integrations, in the places where they make sense. Each pattern page shows one running and says what it takes. The <a href="/skill/">agent skill</a> goes a step further: it is one file that you give to a coding agent. The agent reads your codebase, your manifest and your plans, checks them against the patterns here, and reports which integrations fit your site and which ones to skip.</p>
+        <p>The site also writes down what goes wrong, on every page, and what is missing. A native app can be opened by a link scheme, a file type or a share, and can hand a result back to whatever opened it. The web has most of the first half of that now. It has very little of the second: a handler is given a string, a form or some file handles, and the app that started it hears nothing back. <a href="/missing/">What web app integration is missing</a> is the list of what I want browser vendors to build or fix, with a check for each gap where one can be run.</p>
       </section>
 
       <section id="who">
