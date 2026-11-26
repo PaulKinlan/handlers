@@ -7,7 +7,7 @@ import { render } from "/detect.js";
 import { TASKS_MIME, decodeTasks } from "/clipboard-format.js";
 
 // Most of what the manifest declares only works once the app is installed.
-offerInstall(document.getElementById("install"), "Notes", "Installing is what puts Notes in the share sheet, in the Open with list for .webnote files, and behind web+note: links.");
+offerInstall(document.getElementById("install"), "Notes", "Installing is what puts Notes in the Open with list for .webnote files and behind web+note: links, and in the share sheet on Android, ChromeOS and Windows. Chrome on a Mac does not add it to the share sheet.");
 
 const $ = (id) => document.getElementById(id);
 const editor = $("editor");

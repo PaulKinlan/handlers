@@ -7,7 +7,7 @@ import { render } from "/detect.js";
 import { TASKS_MIME, encodeTasks } from "/clipboard-format.js";
 
 // Most of what the manifest declares only works once the app is installed.
-offerInstall(document.getElementById("install"), "Tasks", "Installing is what puts Tasks in the share sheet and in the Open with list for .webtasks files, and gives its icon a count.");
+offerInstall(document.getElementById("install"), "Tasks", "Installing is what puts Tasks in the Open with list for .webtasks files and gives its icon a count, and puts it in the share sheet on Android, ChromeOS and Windows. Chrome on a Mac does not add it to the share sheet.");
 
 const $ = (id) => document.getElementById(id);
 const KEY = "tasks";

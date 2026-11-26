@@ -79,12 +79,17 @@ export const demos = {
     checks: ["share", "shareFiles", "standalone"],
     steps: [
       `Install Notes (POST, with files) and Tasks (GET). ${link(s.notes, "Open Notes")} ${link(s.tasks, "Open Tasks")}`,
-      "Share a page or a text file from another app, and pick Notes or Tasks in the share sheet.",
+      "On Android, ChromeOS or Windows, share a page or a text file from another app, and pick Notes or Tasks in the share sheet.",
+      "On a Mac they are not in the sheet. Chrome does not register share targets on macOS.",
     ],
   }),
   "web-share": (s) => ({
     checks: ["share", "shareFiles"],
-    steps: [`In Tasks, press Share the list. If Notes is installed, it is one of the places the list can go. ${link(s.tasks, "Open Tasks")}`],
+    steps: [
+      `In Tasks, press Share the list. The system share sheet opens. ${link(s.tasks, "Open Tasks")}`,
+      "On Android, ChromeOS and Windows, an installed Notes is one of the places the list can go.",
+      "On a Mac it is not. The Notes in that sheet is Apple's. Use <strong>Send to Notes</strong> in Tasks instead, which goes by the <code>web+note:</code> scheme.",
+    ],
   }),
   clipboard: (s) => ({
     checks: ["clipboard", "clipboardCustom"],

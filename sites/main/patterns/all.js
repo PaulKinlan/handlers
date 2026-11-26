@@ -239,7 +239,7 @@ export const all = [
       "Post to a social or Mastodon client from the share sheet.",
     ],
     traps: [
-      "Only installed apps appear. Availability depends on the browser and the operating system share sheet: Chromium on Android and ChromeOS supports it; check other platforms with the probe on this page.",
+      "Only installed apps appear, and only on some platforms. Chrome on Android, ChromeOS and Windows lists them. Chrome on macOS does not: the share sheet there shows native apps only.",
       "Apps put the URL in different fields. Many send it in <code>text</code>, not <code>url</code>.",
       "Files need POST and <code>multipart/form-data</code>, and the accepted types must be listed.",
     ],
@@ -253,7 +253,7 @@ export const all = [
     blurb: "A page opens the system share sheet with text, a URL or files, and the person picks where they go, including other installed web apps.",
     how: ["<code>navigator.share({ title, text, url, files })</code> must run from a user gesture. <code>navigator.canShare()</code> says whether the data, in particular files, can be shared. The tasks app shares a task, which the notes app can receive."],
     build: ["A share button that hands content to whatever app the person uses, without a list of social networks.", "Handing a generated file to another app on the device."],
-    traps: ["Rejects with <code>AbortError</code> when the person closes the sheet; that is not a failure.", "Desktop support varies by browser and operating system."],
+    traps: ["Rejects with <code>AbortError</code> when the person closes the sheet; that is not a failure.", "On macOS the sheet opens, and an installed web app is not in it. The Notes it lists is Apple's Notes.", "Desktop support varies by browser and operating system."],
     links: [["Web Share", "https://w3c.github.io/web-share/"]],
     blog: [["Creating a share button web component", BLOG + "creating-a-share-button-web-component/"]],
     related: ["share-target"],
